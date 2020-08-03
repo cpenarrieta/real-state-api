@@ -1,0 +1,9 @@
+.idea/
+node_modules/
+build/
+tmp/
+temp/
+.DS_Store
+.env
+prisma/.env
+serviceAccountKey.json
