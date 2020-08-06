@@ -8,14 +8,63 @@ datasource db {
 }
 
 model property {
-  id     Int     @default(autoincrement()) @id
-  title  String?
-  userId Int     @default(autoincrement())
-  user   user    @relation(fields: [id], references: [id])
+  id                 Int              @default(autoincrement()) @id
+  title              String?
+  userId             Int              @default(autoincrement())
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @default(now())
+  uuid               String?
+  description        String?
+  bedrooms           Int?
+  bathrooms          Int?
+  lotSize            Int?
+  builtYear          Int?
+  grossTaxesLastYear Int?
+  openHouse          Boolean?         @default(false)
+  strata             Boolean?         @default(false)
+  price              Int?
+  hidePrice          Boolean?         @default(false)
+  fullAddress        String?
+  community          String?
+  address1           String?
+  address2           String?
+  city               String?
+  province           String?
+  zipCode            String?
+  pictures           String[]
+  floorPlans         String[]
+  videos             String[]
+  soldAt             DateTime?
+  propertyType       property_type?
+  currency           currency?
+  status             property_status?
+  user               user             @relation(fields: [id], references: [id])
 }
 
 model user {
-  id       Int        @default(autoincrement()) @id
-  email    String?
-  properties property[]
+  id        Int        @default(autoincrement()) @id
+  email     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now())
+  property  property[]
+}
+
+enum currency {
+  CAD
+  USD
+}
+
+enum property_status {
+  ACTIVE
+  HOLD
+  INACTIVE
+  SOLD
+}
+
+enum property_type {
+  CONDO
+  HOUSE
+  LAND
+  OTHER
+  TOWNHOUSE
 }
