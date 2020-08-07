@@ -5,7 +5,7 @@ export const resolvers = {
     users: async (parent: object, args: object, ctx: MyContext) => {
       const users = await ctx.prisma.user.findMany({
         include: {
-          properties: {
+          property: {
             select: {
               id: true,
               title: true,
@@ -26,6 +26,28 @@ export const resolvers = {
   },
   Mutation: {
     logout: async (parent: object, args: object, ctx: MyContext) => {
+      return true;
+    },
+    saveProperty: async (parent: object, args: object, ctx: MyContext) => {
+      return {};
+    },
+    verifyUser: async (parent: object, args: object, ctx: MyContext) => {
+      const uuid = ctx.req.user?.sub;
+
+      if (!uuid) return false;
+
+      await ctx.prisma.user.upsert({
+        create: {
+          uuid,
+        },
+        update: {
+          uuid,
+        },
+        where: {
+          uuid,
+        },
+      });
+
       return true;
     },
   },

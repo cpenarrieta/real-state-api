@@ -17,5 +17,10 @@
     "titleBar.inactiveBackground": "#f8d38199",
     "titleBar.inactiveForeground": "#15202b99"
   },
-  "peacock.color": "#f8d381"
+  "peacock.color": "#f8d381",
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/.hg/store/**": true
+  }
 }

@@ -13,7 +13,7 @@ model property {
   userId             Int              @default(autoincrement())
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @default(now())
-  uuid               String?
+  uuid               String           @unique
   description        String?
   bedrooms           Int?
   bathrooms          Int?
@@ -46,6 +46,7 @@ model user {
   email     String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now())
+  uuid      String     @unique
   property  property[]
 }
 

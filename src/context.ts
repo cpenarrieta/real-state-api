@@ -4,9 +4,8 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export interface AuthUser {
-  userId: string;
-  email?: string;
-  role?: string;
+  sub: string;
+  role?: string; // TODO: how to get this from Auth0
 }
 
 export interface MyRequest extends Request {

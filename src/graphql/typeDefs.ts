@@ -4,21 +4,22 @@ export const typeDefs = gql`
   scalar Date
 
   type User {
-    id: ID
-    uid: String
-    firstName: String
-    lastName: String
+    uuid: ID
     email: String
     createdAt: Date
     updatedAt: Date
-    properties: [Property]
+    property: [Property]
   }
 
   type Property {
-    id: ID
+    uuid: ID
     title: String
   }
 
+  input PropertyInput {
+    uuid: String
+    title: String
+  }
 
   type Query {
     users: [User]
@@ -28,5 +29,7 @@ export const typeDefs = gql`
 
   type Mutation {
     logout: Boolean
+    saveProperty(property: PropertyInput): Property
+    verifyUser: Boolean
   }
 `;
