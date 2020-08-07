@@ -1,8 +1,12 @@
 import { MyContext, PropertyArgs } from "../context";
 import { property_status } from "@prisma/client";
-import { ApolloError, AuthenticationError } from "apollo-server-express";
-const Hashids = require("hashids/cjs");
+import {
+  ApolloError,
+  AuthenticationError,
+  UserInputError,
+} from "apollo-server-express";
 
+const Hashids = require("hashids/cjs");
 const hashids = new Hashids(process.env.HASH_SALT, 10);
 
 const findUser = async (ctx: MyContext, uuid: string) => {
@@ -79,6 +83,62 @@ export const resolvers = {
       });
 
       return properties;
+    },
+    property: async (
+      parent: object,
+      args: { uuid: string },
+      ctx: MyContext
+    ) => {
+      const userUuid = ctx.req.user?.sub || "";
+      const propertyUuid = args?.uuid;
+      const user = await findUser(ctx, userUuid);
+
+      const property = await ctx.prisma.property.findOne({
+        where: {
+          uuid: propertyUuid,
+        },
+        select: {
+          uuid: true,
+          title: true,
+          fullAddress: true,
+          address1: true,
+          address2: true,
+          zipCode: true,
+          city: true,
+          community: true,
+          bathrooms: true,
+          province: true,
+          bedrooms: true,
+          builtYear: true,
+          currency: true,
+          price: true,
+          description: true,
+          pictures: true,
+          videos: true,
+          floorPlans: true,
+          grossTaxesLastYear: true,
+          hidePrice: true,
+          lotSize: true,
+          openHouse: true,
+          propertyType: true,
+          status: true,
+          createdAt: true,
+          soldAt: true,
+          strata: true,
+          updatedAt: true,
+          userId: true,
+        },
+      });
+
+      if (!property) {
+        throw new UserInputError("Invalid Property");
+      }
+
+      if (property?.userId !== user.id) {
+        throw new ApolloError("Property does not belongs to User");
+      }
+
+      return property;
     },
     me: async (parent: object, args: object, ctx: MyContext) => {
       return null;

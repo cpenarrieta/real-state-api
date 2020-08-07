@@ -71,6 +71,7 @@ export const typeDefs = gql`
   type Query {
     users: [User]
     properties: [Property]
+    property(uuid: String!): Property
     me: User
   }
 
