@@ -8,22 +8,22 @@ datasource db {
 }
 
 model property {
-  id                 Int              @default(autoincrement()) @id
+  id                 Int               @default(autoincrement()) @id
   title              String?
-  userId             Int              @default(autoincrement())
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @default(now())
-  uuid               String           @default(dbgenerated()) @unique
+  userId             Int               @default(autoincrement())
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @default(now())
+  uuid               String            @default(dbgenerated()) @unique
   description        String?
   bedrooms           Int?
   bathrooms          Int?
   lotSize            Int?
   builtYear          Int?
   grossTaxesLastYear Int?
-  openHouse          Boolean?         @default(false)
-  strata             Boolean?         @default(false)
+  openHouse          Boolean?          @default(false)
+  strata             Boolean?          @default(false)
   price              Int?
-  hidePrice          Boolean?         @default(false)
+  hidePrice          Boolean?          @default(false)
   fullAddress        String?
   community          String?
   address1           String?
@@ -37,8 +37,9 @@ model property {
   soldAt             DateTime?
   propertyType       property_type?
   currency           currency?
-  status             property_status?
-  user               user             @relation(fields: [userId], references: [id])
+  status             property_status?  @default(ACTIVE)
+  publishedStatus    published_status? @default(DRAFT)
+  user               user              @relation(fields: [userId], references: [id])
 }
 
 model user {
@@ -68,4 +69,10 @@ enum property_type {
   LAND
   OTHER
   TOWNHOUSE
+}
+
+enum published_status {
+  DRAFT
+  INACTIVE
+  PUBLISHED
 }

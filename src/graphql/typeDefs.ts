@@ -10,6 +10,12 @@ export const typeDefs = gql`
     SOLD
   }
 
+  enum PUBLISHED_STATUS {
+    DRAFT
+    PUBLISHED
+    INACTIVE
+  }
+
   enum PROPERTY_TYPE {
     CONDO
     HOUSE
@@ -61,6 +67,7 @@ export const typeDefs = gql`
     currency: CURRENCY
     status: PROPERTY_STATUS
     user: User
+    publishedStatus: PUBLISHED_STATUS
   }
 
   input PropertyInput {

@@ -79,6 +79,7 @@ export const resolvers = {
           soldAt: true,
           strata: true,
           updatedAt: true,
+          publishedStatus: true,
         },
       });
 
@@ -127,6 +128,7 @@ export const resolvers = {
           strata: true,
           updatedAt: true,
           userId: true,
+          publishedStatus: true,
         },
       });
 
