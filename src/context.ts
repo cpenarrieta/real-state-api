@@ -3,6 +3,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export interface PropertyArgs {
+  uuid?: string;
+  title?: string;
+}
+
 export interface AuthUser {
   sub: string;
   role?: string; // TODO: how to get this from Auth0

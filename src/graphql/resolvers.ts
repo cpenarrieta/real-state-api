@@ -1,4 +1,23 @@
-import { MyContext } from "../context";
+import { MyContext, PropertyArgs } from "../context";
+import { property_status } from "@prisma/client";
+import { ApolloError, AuthenticationError } from "apollo-server-express";
+const Hashids = require("hashids/cjs");
+
+const hashids = new Hashids(process.env.HASH_SALT, 10);
+
+const findUser = async (ctx: MyContext, uuid: string) => {
+  const user = await ctx.prisma.user.findOne({
+    where: {
+      uuid,
+    },
+  });
+
+  if (!user) {
+    throw new AuthenticationError("User not found");
+  }
+
+  return user;
+};
 
 export const resolvers = {
   Query: {
@@ -17,7 +36,48 @@ export const resolvers = {
       return users;
     },
     properties: async (parent: object, args: object, ctx: MyContext) => {
-      const properties = await ctx.prisma.property.findMany({});
+      const uuid = ctx.req.user?.sub;
+
+      // TODO: is it faster to first get the User and then search by user instead of uuid?
+      const properties = ctx.prisma.property.findMany({
+        where: {
+          status: property_status.ACTIVE,
+          user: {
+            uuid,
+          },
+        },
+        select: {
+          uuid: true,
+          title: true,
+          fullAddress: true,
+          address1: true,
+          address2: true,
+          zipCode: true,
+          city: true,
+          community: true,
+          bathrooms: true,
+          province: true,
+          bedrooms: true,
+          builtYear: true,
+          currency: true,
+          price: true,
+          description: true,
+          pictures: true,
+          videos: true,
+          floorPlans: true,
+          grossTaxesLastYear: true,
+          hidePrice: true,
+          lotSize: true,
+          openHouse: true,
+          propertyType: true,
+          status: true,
+          createdAt: true,
+          soldAt: true,
+          strata: true,
+          updatedAt: true,
+        },
+      });
+
       return properties;
     },
     me: async (parent: object, args: object, ctx: MyContext) => {
@@ -25,10 +85,48 @@ export const resolvers = {
     },
   },
   Mutation: {
-    logout: async (parent: object, args: object, ctx: MyContext) => {
-      return true;
-    },
-    saveProperty: async (parent: object, args: object, ctx: MyContext) => {
+    saveProperty: async (
+      parent: object,
+      args: { property: PropertyArgs },
+      ctx: MyContext
+    ) => {
+      let propertyUuid = args?.property?.uuid;
+      const userUuid = ctx.req.user?.sub || "";
+      let propertySaved = null;
+
+      const user = await findUser(ctx, userUuid);
+
+      if (!propertyUuid) {
+        try {
+          propertySaved = await ctx.prisma.property.create({
+            data: {
+              user: {
+                connect: {
+                  id: user.id,
+                },
+              },
+            },
+          });
+          propertyUuid = hashids.encode(propertySaved.id);
+          propertySaved = await ctx.prisma.property.update({
+            data: {
+              uuid: propertyUuid,
+            },
+            where: {
+              id: propertySaved.id,
+            },
+          });
+          return propertySaved;
+        } catch (e) {
+          //TODO: report error to Bugsnag? NewRelic?
+          throw new ApolloError("Error sdaving property");
+        }
+      } else {
+        // search for property
+        // check if user login owns this property
+        // update property
+      }
+
       return {};
     },
     verifyUser: async (parent: object, args: object, ctx: MyContext) => {

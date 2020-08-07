@@ -13,7 +13,7 @@ model property {
   userId             Int              @default(autoincrement())
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @default(now())
-  uuid               String           @unique
+  uuid               String           @default(dbgenerated()) @unique
   description        String?
   bedrooms           Int?
   bathrooms          Int?
@@ -38,7 +38,7 @@ model property {
   propertyType       property_type?
   currency           currency?
   status             property_status?
-  user               user             @relation(fields: [id], references: [id])
+  user               user             @relation(fields: [userId], references: [id])
 }
 
 model user {
