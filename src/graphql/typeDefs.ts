@@ -79,7 +79,6 @@ export const typeDefs = gql`
     users: [User]
     properties: [Property]
     property(uuid: String!): Property
-    me: User
   }
 
   type Mutation {

@@ -6,6 +6,16 @@ const prisma = new PrismaClient();
 export interface PropertyArgs {
   uuid?: string;
   title?: string;
+  address1?: string;
+  address2?: string;
+  zipCode?: string;
+  city?: string;
+  province?: string;
+  community?: string;
+  bathrooms?: number;
+  bedrooms?: number;
+  builtYear?: number;
+  propertyType?: string;
 }
 
 export interface AuthUser {
