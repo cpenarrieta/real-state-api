@@ -61,6 +61,7 @@ export const typeDefs = gql`
     zipCode: String
     pictures: [String]
     floorPlans: [String]
+    mainPicture: String
     videos: [String]
     soldAt: Date
     propertyType: PROPERTY_TYPE

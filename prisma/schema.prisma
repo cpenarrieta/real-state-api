@@ -39,6 +39,7 @@ model property {
   currency           currency?
   status             property_status?  @default(ACTIVE)
   publishedStatus    published_status? @default(DRAFT)
+  mainPicture        String?
   user               user              @relation(fields: [userId], references: [id])
 }
 

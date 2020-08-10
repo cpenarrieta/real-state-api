@@ -43,6 +43,7 @@ export const findProperty = async (ctx: MyContext, uuid: string) => {
       updatedAt: true,
       userId: true,
       publishedStatus: true,
+      mainPicture: true,
     },
   });
 
@@ -98,6 +99,7 @@ export const myProperties = async (
       strata: true,
       updatedAt: true,
       publishedStatus: true,
+      mainPicture: true,
     },
   });
 
@@ -152,13 +154,11 @@ export const saveProperty = async (
 ) => {
   let propertyUuid = args?.property?.uuid;
   const userUuid = ctx.req.user?.sub || "";
-  let propertySaved = null;
-
   const user = await findUser(ctx, userUuid);
 
   if (!propertyUuid) {
     try {
-      propertySaved = await ctx.prisma.property.create({
+      let propertySaved = await ctx.prisma.property.create({
         data: {
           user: {
             connect: {
