@@ -15,7 +15,19 @@ export interface PropertyArgs {
   bathrooms?: number;
   bedrooms?: number;
   builtYear?: number;
-  propertyType?: string;
+  propertyType?:
+    | "HOUSE"
+    | "TOWNHOUSE"
+    | "CONDO"
+    | "LAND"
+    | "OTHER"
+    | undefined
+    | null;
+  mainPicture?: string;
+  price?: number;
+  currency?: "CAD" | "USD" | undefined | null;
+  status?: "ACTIVE" | "INACTIVE" | "SOLD" | "HOLD" | undefined | null;
+  publishedStatus?: "DRAFT" | "PUBLISHED" | "INACTIVE" | undefined | null;
 }
 
 export interface AuthUser {

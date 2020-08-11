@@ -1,6 +1,6 @@
 import { MyContext, PropertyArgs } from "../context";
 import { ApolloError, UserInputError } from "apollo-server-express";
-import { property_status, property_type } from "@prisma/client";
+import { property_status } from "@prisma/client";
 import { findUser } from "../users";
 
 const Hashids = require("hashids/cjs");
@@ -64,7 +64,9 @@ export const myProperties = async (
   // TODO: is it faster to first get the User and then search by user instead of uuid?
   const properties = ctx.prisma.property.findMany({
     where: {
-      status: property_status.ACTIVE,
+      status: {
+        in: [property_status.ACTIVE, property_status.SOLD],
+      },
       user: {
         uuid,
       },
@@ -101,6 +103,9 @@ export const myProperties = async (
       publishedStatus: true,
       mainPicture: true,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return properties;
@@ -126,25 +131,6 @@ export const myProperty = async (
   }
 
   return property;
-};
-
-const getPropertyType = (propertyType?: string) => {
-  if (propertyType === property_type.HOUSE) {
-    return property_type.HOUSE;
-  }
-  if (propertyType === property_type.TOWNHOUSE) {
-    return property_type.TOWNHOUSE;
-  }
-  if (propertyType === property_type.CONDO) {
-    return property_type.CONDO;
-  }
-  if (propertyType === property_type.LAND) {
-    return property_type.LAND;
-  }
-  if (propertyType === property_type.OTHER) {
-    return property_type.OTHER;
-  }
-  return undefined;
 };
 
 export const saveProperty = async (
@@ -201,6 +187,9 @@ export const saveProperty = async (
         bedrooms,
         builtYear,
         propertyType,
+        mainPicture,
+        price,
+        currency,
       } = args?.property;
 
       propertyUpdated = await ctx.prisma.property.update({
@@ -218,7 +207,10 @@ export const saveProperty = async (
           bathrooms,
           bedrooms,
           builtYear,
-          propertyType: getPropertyType(propertyType),
+          propertyType,
+          mainPicture,
+          price,
+          currency,
         },
       });
 
