@@ -7,6 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model lead {
+  id          Int          @default(autoincrement()) @id
+  name        String?
+  phone       String?
+  email       String?
+  address1    String?
+  address2    String?
+  city        String?
+  province    String?
+  zipCode     String?
+  country     String?
+  propertyId  Int          @default(autoincrement())
+  lead_status lead_status? @default(PENDING)
+  property    property     @relation(fields: [propertyId], references: [id])
+}
+
 model property {
   id                 Int               @default(autoincrement()) @id
   title              String?
@@ -42,6 +58,7 @@ model property {
   mainPicture        String?
   country            String?
   user               user              @relation(fields: [userId], references: [id])
+  lead               lead[]
 }
 
 model user {
@@ -68,6 +85,14 @@ model user {
 enum currency {
   CAD
   USD
+}
+
+enum lead_status {
+  ARCHIVED
+  BUYER
+  CONTACTED
+  PENDING
+  STARRED
 }
 
 enum property_status {
