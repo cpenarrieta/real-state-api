@@ -1,4 +1,4 @@
-import { MyContext } from "../context";
+import { MyContext, UserArgs } from "../context";
 import { AuthenticationError } from "apollo-server-express";
 
 export const findUser = async (ctx: MyContext, uuid: string) => {
@@ -56,4 +56,59 @@ export const verifyUser = async (
   });
 
   return true;
+};
+
+export const me = async (parent: object, args: object, ctx: MyContext) => {
+  const userUuid = ctx.req.user?.sub || "";
+
+  const user = await findUser(ctx, userUuid);
+
+  return user;
+};
+
+export const saveUser = async (
+  parent: object,
+  args: { user: UserArgs },
+  ctx: MyContext
+) => {
+  const userUuid = ctx.req.user?.sub || "";
+
+  let user = await findUser(ctx, userUuid);
+
+  const { 
+    email,
+    firstName,
+    lastName,
+    phone,
+    address,
+    picture,
+    address1,
+    address2,
+    city,
+    province,
+    zipCode,
+    pictureLowRes,
+  } = args?.user;
+
+  user = await ctx.prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      email,
+      firstName,
+      lastName,
+      phone,
+      address,
+      picture,
+      address1,
+      address2,
+      city,
+      province,
+      zipCode,
+      pictureLowRes,
+    },
+  });
+
+  return user;
 };

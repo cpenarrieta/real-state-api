@@ -3,6 +3,22 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export interface UserArgs {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  address?: string;
+  picture?: string;
+  pictureLowRes?: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  province?: string;
+  zipCode?: string;
+  country?: string;
+}
+
 export interface PropertyArgs {
   uuid?: string;
   title?: string;
@@ -11,6 +27,7 @@ export interface PropertyArgs {
   zipCode?: string;
   city?: string;
   province?: string;
+  country?: string;
   community?: string;
   bathrooms?: number;
   bedrooms?: number;

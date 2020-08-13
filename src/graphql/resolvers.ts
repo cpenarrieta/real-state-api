@@ -1,4 +1,4 @@
-import { allUsers, verifyUser } from "../users";
+import { allUsers, verifyUser, me, saveUser } from "../users";
 import { myProperties, myProperty, saveProperty } from "../properties";
 
 export const resolvers = {
@@ -6,9 +6,11 @@ export const resolvers = {
     users: allUsers,
     properties: myProperties,
     property: myProperty,
+    me: me,
   },
   Mutation: {
     saveProperty: saveProperty,
     verifyUser: verifyUser,
+    saveUser: saveUser,
   },
 };

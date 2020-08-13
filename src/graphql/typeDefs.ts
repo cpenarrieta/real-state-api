@@ -32,6 +32,18 @@ export const typeDefs = gql`
   type User {
     uuid: ID
     email: String
+    firstName: String
+    lastName: String
+    phone: String
+    address: String
+    address1: String
+    address2: String
+    city: String
+    province: String
+    zipCode: String
+    country: String
+    picture: String
+    pictureLowRes: String
     createdAt: Date
     updatedAt: Date
     property: [Property]
@@ -59,6 +71,7 @@ export const typeDefs = gql`
     city: String
     province: String
     zipCode: String
+    country: String
     pictures: [String]
     floorPlans: [String]
     mainPicture: String
@@ -93,6 +106,7 @@ export const typeDefs = gql`
     city: String
     province: String
     zipCode: String
+    country: String
     pictures: [String]
     floorPlans: [String]
     mainPicture: String
@@ -104,14 +118,32 @@ export const typeDefs = gql`
     publishedStatus: PUBLISHED_STATUS
   }
 
+  input UserInput {
+    email: String
+    firstName: String
+    lastName: String
+    phone: String
+    address: String
+    picture: String
+    pictureLowRes: String
+    address1: String
+    address2: String
+    city: String
+    province: String
+    zipCode: String
+    country: String
+  }
+
   type Query {
     users: [User]
     properties: [Property]
     property(uuid: String!): Property
+    me: User
   }
 
   type Mutation {
     saveProperty(property: PropertyInput): Property
+    saveUser(user: UserInput): User
     verifyUser: Boolean
   }
 `;
