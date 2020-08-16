@@ -77,6 +77,7 @@ export const typeDefs = gql`
     mainPicture: String
     videos: [String]
     soldAt: Date
+    webPaidUntil: Date
     propertyType: PROPERTY_TYPE
     currency: CURRENCY
     status: PROPERTY_STATUS
@@ -145,5 +146,6 @@ export const typeDefs = gql`
     saveProperty(property: PropertyInput): Property
     saveUser(user: UserInput): User
     verifyUser: Boolean
+    publishProperty(propertyUuid: String): Boolean
   }
 `;

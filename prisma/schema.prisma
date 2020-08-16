@@ -57,6 +57,7 @@ model property {
   publishedStatus    published_status? @default(DRAFT)
   mainPicture        String?
   country            String?
+  webPaidUntil       DateTime?
   user               user              @relation(fields: [userId], references: [id])
   lead               lead[]
 }

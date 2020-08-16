@@ -1,5 +1,5 @@
 import { allUsers, verifyUser, me, saveUser } from "../users";
-import { myProperties, myProperty, saveProperty } from "../properties";
+import { myProperties, myProperty, saveProperty, publishProperty } from "../properties";
 
 export const resolvers = {
   Query: {
@@ -12,5 +12,6 @@ export const resolvers = {
     saveProperty: saveProperty,
     verifyUser: verifyUser,
     saveUser: saveUser,
+    publishProperty: publishProperty,
   },
 };

@@ -1,7 +1,8 @@
 import { MyContext, PropertyArgs } from "../context";
 import { ApolloError, UserInputError } from "apollo-server-express";
-import { property_status } from "@prisma/client";
+import { property_status, published_status } from "@prisma/client";
 import { findUser } from "../users";
+import { compareAsc, addDays, format } from "date-fns";
 
 const Hashids = require("hashids/cjs");
 const hashids = new Hashids(process.env.HASH_SALT, 10);
@@ -44,6 +45,7 @@ export const findProperty = async (ctx: MyContext, uuid: string) => {
       userId: true,
       publishedStatus: true,
       mainPicture: true,
+      webPaidUntil: true,
     },
   });
 
@@ -219,4 +221,50 @@ export const saveProperty = async (
       throw new ApolloError("Error updating property");
     }
   }
+};
+
+export const publishProperty = async (
+  parent: object,
+  args: { propertyUuid: string },
+  ctx: MyContext
+) => {
+  let propertyUuid = args?.propertyUuid;
+  const userUuid = ctx.req.user?.sub || "";
+  const user = await findUser(ctx, userUuid);
+  const propertyUpdated = await findProperty(ctx, propertyUuid);
+
+  // TODO: when user is admin and have manage:publish-property scope
+  if (propertyUpdated?.userId !== user.id) {
+    throw new ApolloError("Property does not belongs to User");
+  }
+
+  if (!propertyUpdated.webPaidUntil) {
+    throw new ApolloError("Property does not have a valid payment");
+  }
+
+  // IS PAID VALID
+  if (compareAsc(addDays(propertyUpdated.webPaidUntil, 7), new Date()) === 1) {
+    // TODO: save from previous to publish table
+    try {
+      await ctx.prisma.property.update({
+        where: {
+          id: propertyUpdated.id,
+        },
+        data: {
+          publishedStatus: published_status.PUBLISHED,
+        },
+      });
+
+      return true;
+    } catch (e) {
+      throw new ApolloError("Error Publishing Property");
+    }
+  }
+
+  throw new ApolloError(
+    `Property does not have a valid payment - ${format(
+      propertyUpdated.webPaidUntil,
+      "dd/MM/yyyy"
+    )}`
+  );
 };
