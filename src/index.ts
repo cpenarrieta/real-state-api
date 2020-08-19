@@ -13,6 +13,18 @@ import { activateProperty } from "./services/activateProperty";
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
+const requireAuth = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: process.env.AUTH0_JWKS_URI as string,
+  }),
+  audience: process.env.AUTH0_AUDIENCE,
+  issuer: process.env.AUTH0_JWKS_ISSUER,
+  algorithms: ["RS256"],
+});
+
 (async () => {
   const app = express();
   app.use(
@@ -34,50 +46,56 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
   });
 
   // Fetch the Checkout Session to display the JSON result on the success page
-  app.get("/checkout-session", async (req, res) => {
+  app.get("/checkout-session", requireAuth, async (req, res) => {
     const { sessionId } = req.query;
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     res.send(session);
   });
 
   app.use("/create-checkout-session", bodyParser.json());
-  app.post("/create-checkout-session", async (req, res) => {
-    const domainURL = process.env.APP_URL;
-    const { productType, propertyId, email } = req.body;
-    const price = await stripe.prices.retrieve(productType);
+  app.post(
+    "/create-checkout-session",
+    requireAuth,
+    async (req: MyRequest, res) => {
+      const domainURL = process.env.APP_URL;
+      const { productType, propertyId, email } = req.body;
+      const userUuid = req.user?.sub;
+      const price = await stripe.prices.retrieve(productType);
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-      locale: "en",
-      customer_email: email,
-      line_items: [
-        {
-          price_data: {
-            currency: price.currency,
-            product: price.product,
-            unit_amount: price.unit_amount,
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        mode: "payment",
+        locale: "en",
+        customer_email: email,
+        line_items: [
+          {
+            price_data: {
+              currency: price.currency,
+              product: price.product,
+              unit_amount: price.unit_amount,
+            },
+            quantity: 1,
           },
-          quantity: 1,
+        ],
+        metadata: {
+          propertyId,
+          product: price.product,
+          userUuid,
         },
-      ],
-      metadata: {
-        propertyId,
-        product: price.product,
-      },
-      success_url: `${domainURL}/payment-success?session_id={CHECKOUT_SESSION_ID}&propertyId=${propertyId}`,
-      cancel_url: `${domainURL}/payment/${propertyId}`, // req.headers.referer
-    });
+        success_url: `${domainURL}/payment-success?session_id={CHECKOUT_SESSION_ID}&propertyId=${propertyId}`,
+        cancel_url: `${domainURL}/payment/${propertyId}`, // req.headers.referer
+      });
 
-    res.send({
-      sessionId: session.id,
-    });
-  });
+      res.send({
+        sessionId: session.id,
+      });
+    }
+  );
 
   app.post(
     "/webhook",
     bodyParser.raw({ type: "application/json" }),
-    async (request, response) => {
+    async (request: MyRequest, response) => {
       const sig = request.headers["stripe-signature"];
       let event;
 
@@ -95,9 +113,14 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
       switch (event.type) {
         case "checkout.session.completed":
           const sessionComplete = event.data.object;
-          const { propertyId, product } = sessionComplete?.metadata;
+          const { product, userUuid } = sessionComplete?.metadata;
           const productData = await stripe.products.retrieve(product);
-          await activateProperty(propertyId, productData?.metadata?.type);
+
+          await activateProperty(
+            sessionComplete,
+            productData?.metadata?.type,
+            userUuid || ""
+          );
           break;
         default:
           return response.status(400).end();
@@ -106,18 +129,6 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
       response.json({ received: true });
     }
   );
-
-  const requireAuth = jwt({
-    secret: jwks.expressJwtSecret({
-      cache: true,
-      rateLimit: true,
-      jwksRequestsPerMinute: 5,
-      jwksUri: process.env.AUTH0_JWKS_URI as string,
-    }),
-    audience: process.env.AUTH0_AUDIENCE,
-    issuer: process.env.AUTH0_JWKS_ISSUER,
-    algorithms: ["RS256"],
-  });
 
   app.post("/graphql", requireAuth, async (req: MyRequest, res, next) => {
     next();

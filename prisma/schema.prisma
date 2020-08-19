@@ -80,6 +80,7 @@ model user {
   zipCode       String?
   country       String?
   pictureLowRes String?
+  stripeId      String?
   property      property[]
 }
 
