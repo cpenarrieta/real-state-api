@@ -146,6 +146,6 @@ const requireAuth = jwt({
   apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(4000, () => {
-    console.log("express server started");
+    console.log("express server started 🚀 🚀 🚀 - Port ", 4000);
   });
 })();

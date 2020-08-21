@@ -58,6 +58,7 @@ model property {
   mainPicture        String?
   country            String?
   webPaidUntil       DateTime?
+  username           String?
   user               user              @relation(fields: [userId], references: [id])
   lead               lead[]
 }
@@ -81,6 +82,7 @@ model user {
   country       String?
   pictureLowRes String?
   stripeId      String?
+  username      String?
   property      property[]
 }
 
