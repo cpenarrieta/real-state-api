@@ -46,6 +46,7 @@ export const findProperty = async (ctx: MyContext, uuid: string) => {
       publishedStatus: true,
       mainPicture: true,
       webPaidUntil: true,
+      username: true,
     },
   });
 

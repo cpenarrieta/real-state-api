@@ -47,6 +47,7 @@ export const typeDefs = gql`
     createdAt: Date
     updatedAt: Date
     property: [Property]
+    username: String
   }
 
   type Property {
@@ -83,6 +84,7 @@ export const typeDefs = gql`
     status: PROPERTY_STATUS
     user: User
     publishedStatus: PUBLISHED_STATUS
+    username: String
   }
 
   input PropertyInput {
