@@ -20,6 +20,9 @@ model lead {
   country     String?
   propertyId  Int          @default(autoincrement())
   lead_status lead_status? @default(PENDING)
+  visitorId   String?
+  createdAt   DateTime?    @default(now())
+  updatedAt   DateTime?    @default(now())
   property    property     @relation(fields: [propertyId], references: [id])
 }
 
@@ -84,6 +87,13 @@ model user {
   stripeId      String?
   username      String?
   property      property[]
+}
+
+model visitor {
+  id         Int       @default(autoincrement()) @id
+  visitorId  String?
+  propertyId Int       @default(autoincrement())
+  createdAt  DateTime? @default(now())
 }
 
 enum currency {
