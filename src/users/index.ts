@@ -88,6 +88,7 @@ export const saveUser = async (
     province,
     zipCode,
     pictureLowRes,
+    username,
   } = args?.user;
 
   user = await ctx.prisma.user.update({
@@ -107,6 +108,7 @@ export const saveUser = async (
       province,
       zipCode,
       pictureLowRes,
+      username, // TODO verify uniqueness
     },
   });
 

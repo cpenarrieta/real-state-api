@@ -17,6 +17,7 @@ export interface UserArgs {
   province?: string;
   zipCode?: string;
   country?: string;
+  username? :string;
 }
 
 export interface PropertyArgs {

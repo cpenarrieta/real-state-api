@@ -135,6 +135,7 @@ export const typeDefs = gql`
     province: String
     zipCode: String
     country: String
+    username: String
   }
 
   type Query {
