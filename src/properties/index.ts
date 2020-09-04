@@ -160,6 +160,7 @@ export const saveProperty = async (
       propertySaved = await ctx.prisma.property.update({
         data: {
           uuid: propertyUuid,
+          username: user.username,
         },
         where: {
           id: propertySaved.id,

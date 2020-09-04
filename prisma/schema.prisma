@@ -62,6 +62,10 @@ model property {
   country            String?
   webPaidUntil       DateTime?
   username           String?
+  videoUrl           String?
+  videoType          video_type?
+  lat                Float?
+  lon                Float?
   user               user              @relation(fields: [userId], references: [id])
   lead               lead[]
 }
@@ -86,6 +90,7 @@ model user {
   pictureLowRes String?
   stripeId      String?
   username      String?
+  smallBio      String?
   property      property[]
 }
 
@@ -128,4 +133,9 @@ enum published_status {
   DRAFT
   INACTIVE
   PUBLISHED
+}
+
+enum video_type {
+  VIMEO
+  YOUTUBE
 }
