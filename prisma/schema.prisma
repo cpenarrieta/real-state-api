@@ -67,6 +67,7 @@ model property {
   lat                Float?
   lon                Float?
   user               user              @relation(fields: [userId], references: [id])
+  attachments        attachments[]
   lead               lead[]
 }
 
@@ -99,6 +100,16 @@ model visitor {
   visitorId  String?
   propertyId Int       @default(autoincrement())
   createdAt  DateTime? @default(now())
+}
+
+model attachments {
+  id         Int       @default(autoincrement()) @id
+  title      String?
+  url        String?
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @default(now())
+  propertyId Int       @default(autoincrement())
+  property   property  @relation(fields: [propertyId], references: [id])
 }
 
 enum currency {
