@@ -66,6 +66,8 @@ model property {
   videoType          video_type?
   lat                Float?
   lon                Float?
+  color              String?
+  listingId          String?
   user               user              @relation(fields: [userId], references: [id])
   attachments        attachments[]
   lead               lead[]
