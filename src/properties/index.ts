@@ -47,6 +47,12 @@ export const findProperty = async (ctx: MyContext, uuid: string) => {
       mainPicture: true,
       webPaidUntil: true,
       username: true,
+      videoUrl: true,
+      videoType: true,
+      color: true,
+      listingId: true,
+      lat: true,
+      lon: true,
     },
   });
 
@@ -187,13 +193,17 @@ export const saveProperty = async (
         city,
         province,
         community,
+        mainPicture,
         bathrooms,
         bedrooms,
+        currency,
         builtYear,
         propertyType,
-        mainPicture,
         price,
-        currency,
+        lotSize,
+        listingId,
+        grossTaxesLastYear,
+        description,
       } = args?.property;
 
       propertyUpdated = await ctx.prisma.property.update({
@@ -215,6 +225,10 @@ export const saveProperty = async (
           mainPicture,
           price,
           currency,
+          lotSize,
+          listingId,
+          grossTaxesLastYear,
+          description,
         },
       });
 

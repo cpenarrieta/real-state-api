@@ -33,6 +33,10 @@ export interface PropertyArgs {
   bathrooms?: number;
   bedrooms?: number;
   builtYear?: number;
+  lotSize?: number;
+  grossTaxesLastYear?: number;
+  listingId? : string;
+  description? : string;
   propertyType?:
     | "HOUSE"
     | "TOWNHOUSE"

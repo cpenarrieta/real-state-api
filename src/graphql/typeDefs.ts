@@ -29,6 +29,11 @@ export const typeDefs = gql`
     USD
   }
 
+  enum VIDEO_TYPE {
+    VIMEO
+    YOUTUBE
+  }
+
   type User {
     uuid: ID
     email: String
@@ -48,6 +53,13 @@ export const typeDefs = gql`
     updatedAt: Date
     property: [Property]
     username: String
+  }
+
+  type Attachment {
+    id: ID
+    title: String
+    url: String
+    property: [Property]
   }
 
   type Property {
@@ -85,6 +97,13 @@ export const typeDefs = gql`
     user: User
     publishedStatus: PUBLISHED_STATUS
     username: String
+    videoUrl: String
+    videoType: VIDEO_TYPE
+    color: String
+    listingId: String
+    lat: Float
+    lon: Float
+    attachments: [Attachment]
   }
 
   input PropertyInput {
@@ -119,6 +138,13 @@ export const typeDefs = gql`
     currency: CURRENCY
     status: PROPERTY_STATUS
     publishedStatus: PUBLISHED_STATUS
+    videoUrl: String
+    videoType: VIDEO_TYPE
+    color: String
+    listingId: String
+    lat: Float
+    lon: Float
+    attachments: [AttachmentInput]
   }
 
   input UserInput {
@@ -136,6 +162,11 @@ export const typeDefs = gql`
     zipCode: String
     country: String
     username: String
+  }
+
+  input AttachmentInput {
+    title: String
+    url: String
   }
 
   type Query {
