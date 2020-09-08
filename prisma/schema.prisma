@@ -43,7 +43,6 @@ model property {
   strata             Boolean?          @default(false)
   price              Int?
   hidePrice          Boolean?          @default(false)
-  fullAddress        String?
   community          String?
   address1           String?
   address2           String?
@@ -68,6 +67,7 @@ model property {
   lon                Float?
   color              String?
   listingId          String?
+  mainPictureLowRes  String?
   user               user              @relation(fields: [userId], references: [id])
   attachments        attachments[]
   lead               lead[]

@@ -46,6 +46,7 @@ export interface PropertyArgs {
     | undefined
     | null;
   mainPicture?: string;
+  mainPictureLowRes?: string;
   price?: number;
   currency?: "CAD" | "USD" | undefined | null;
   status?: "ACTIVE" | "INACTIVE" | "SOLD" | "HOLD" | undefined | null;

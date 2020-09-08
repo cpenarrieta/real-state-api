@@ -77,7 +77,6 @@ export const typeDefs = gql`
     strata: Boolean
     price: Int
     hidePrice: Boolean
-    fullAddress: String
     community: String
     address1: String
     address2: String
@@ -88,6 +87,7 @@ export const typeDefs = gql`
     pictures: [String]
     floorPlans: [String]
     mainPicture: String
+    mainPictureLowRes: String
     videos: [String]
     soldAt: Date
     webPaidUntil: Date
@@ -121,7 +121,6 @@ export const typeDefs = gql`
     strata: Boolean
     price: Int
     hidePrice: Boolean
-    fullAddress: String
     community: String
     address1: String
     address2: String
@@ -132,6 +131,7 @@ export const typeDefs = gql`
     pictures: [String]
     floorPlans: [String]
     mainPicture: String
+    mainPictureLowRes: String
     videos: [String]
     soldAt: Date
     propertyType: PROPERTY_TYPE
