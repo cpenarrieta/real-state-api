@@ -35,6 +35,8 @@ export interface PropertyArgs {
   builtYear?: number;
   lotSize?: number;
   grossTaxesLastYear?: number;
+  lat?: number;
+  lon?: number;
   listingId? : string;
   description? : string;
   propertyType?:
