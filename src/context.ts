@@ -51,6 +51,8 @@ export interface PropertyArgs {
   currency?: "CAD" | "USD" | undefined | null;
   status?: "ACTIVE" | "INACTIVE" | "SOLD" | "HOLD" | undefined | null;
   publishedStatus?: "DRAFT" | "PUBLISHED" | "INACTIVE" | undefined | null;
+  videoUrl?: string;
+  videoType?: "VIMEO" | "YOUTUBE" | undefined | null;
 }
 
 export interface AuthUser {

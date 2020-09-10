@@ -205,6 +205,8 @@ export const saveProperty = async (
         listingId,
         grossTaxesLastYear,
         description,
+        videoUrl,
+        videoType,
       } = args?.property;
 
       propertyUpdated = await ctx.prisma.property.update({
@@ -231,6 +233,8 @@ export const saveProperty = async (
           listingId,
           grossTaxesLastYear,
           description,
+          videoUrl,
+          videoType,
         },
       });
 
