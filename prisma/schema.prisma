@@ -111,6 +111,7 @@ model attachments {
   createdAt  DateTime? @default(now())
   updatedAt  DateTime? @default(now())
   propertyId Int       @default(autoincrement())
+  active     Boolean?
   property   property  @relation(fields: [propertyId], references: [id])
 }
 

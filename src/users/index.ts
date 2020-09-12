@@ -15,6 +15,23 @@ export const findUser = async (ctx: MyContext, uuid: string) => {
   return user;
 };
 
+export const findUserWithProperties = async (ctx: MyContext, uuid: string) => {
+  const user = await ctx.prisma.user.findOne({
+    where: {
+      uuid,
+    },
+    include: {
+      property: true,
+    },
+  });
+
+  if (!user) {
+    throw new AuthenticationError("User not found");
+  }
+
+  return user;
+};
+
 export const allUsers = async (
   parent: object,
   args: object,
@@ -75,7 +92,7 @@ export const saveUser = async (
 
   let user = await findUser(ctx, userUuid);
 
-  const { 
+  const {
     email,
     firstName,
     lastName,

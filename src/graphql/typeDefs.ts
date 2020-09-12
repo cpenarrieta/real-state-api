@@ -56,7 +56,7 @@ export const typeDefs = gql`
   }
 
   type Attachment {
-    id: ID
+    id: Int
     title: String
     url: String
     property: [Property]
@@ -169,10 +169,16 @@ export const typeDefs = gql`
     url: String
   }
 
+  type S3Payload {
+    signedRequest: String!
+    url: String!
+  }
+
   type Query {
     users: [User]
     properties: [Property]
     property(uuid: String!): Property
+    attachments(uuid: String!): [Attachment]
     me: User
   }
 
@@ -181,5 +187,8 @@ export const typeDefs = gql`
     saveUser(user: UserInput): User
     verifyUser: Boolean
     publishProperty(propertyUuid: String): Boolean
+    signS3(filename: String!, filetype: String!): S3Payload!
+    saveAttachment(url: String!, title: String!, uuid: String!): Boolean
+    deleteAttachment(id: Int): Boolean
   }
 `;
