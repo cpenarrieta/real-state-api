@@ -212,38 +212,64 @@ export const saveProperty = async (
         description,
         videoUrl,
         videoType,
+        pictures,
       } = args?.property;
+
+      let data = {
+        title,
+        address1,
+        address2,
+        zipCode,
+        city,
+        province,
+        community,
+        country,
+        lat,
+        lon,
+        bathrooms,
+        bedrooms,
+        builtYear,
+        propertyType,
+        price,
+        currency,
+        lotSize,
+        listingId,
+        grossTaxesLastYear,
+        description,
+        videoUrl,
+        videoType,
+      } as object;
+
+      if (pictures) {
+        if (propertyUpdated.pictures && propertyUpdated.pictures.length > 0) {
+          data = {
+            ...data,
+            pictures: {
+              set: propertyUpdated.pictures.concat(pictures),
+            },
+          };
+        } else {
+          data = {
+            ...data,
+            pictures: {
+              set: pictures,
+            },
+          };
+        }
+      }
+      if (mainPicture) {
+        data = {
+          ...data,
+          mainPicture,
+          mainPictureLowRes,
+        };
+      }
 
       propertyUpdated = await ctx.prisma.property.update({
         where: {
           id: propertyUpdated.id,
         },
-        data: {
-          title,
-          address1,
-          address2,
-          zipCode,
-          city,
-          province,
-          community,
-          country,
-          lat,
-          lon,
-          bathrooms,
-          bedrooms,
-          builtYear,
-          propertyType,
-          mainPicture,
-          mainPictureLowRes,
-          price,
-          currency,
-          lotSize,
-          listingId,
-          grossTaxesLastYear,
-          description,
-          videoUrl,
-          videoType,
-        },
+        data,
       });
 
       return propertyUpdated;
