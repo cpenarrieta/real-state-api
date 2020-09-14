@@ -11,6 +11,7 @@ import {
   deleteAttachment,
   propertyAttachments,
 } from "../attachments";
+import { propertyImages, savePropertyImages } from "../images";
 
 export const resolvers = {
   Query: {
@@ -19,6 +20,7 @@ export const resolvers = {
     property: myProperty,
     me: me,
     attachments: propertyAttachments,
+    propertyImages,
   },
   Mutation: {
     saveProperty: saveProperty,
@@ -28,5 +30,6 @@ export const resolvers = {
     signS3: signS3,
     saveAttachment: saveAttachment,
     deleteAttachment: deleteAttachment,
+    savePropertyImages,
   },
 };

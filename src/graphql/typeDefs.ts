@@ -60,6 +60,24 @@ export const typeDefs = gql`
     title: String
     url: String
     property: [Property]
+    active: Boolean
+  }
+
+  type Image {
+    id: Int
+    title: String
+    description: String
+    url: String
+    urlLowRes: String
+    property: [Property]
+    active: Boolean
+  }
+
+  input ImagesInput {
+    title: String
+    description: String
+    url: String
+    urlLowRes: String
   }
 
   type Property {
@@ -179,6 +197,7 @@ export const typeDefs = gql`
     properties: [Property]
     property(uuid: String!): Property
     attachments(uuid: String!): [Attachment]
+    propertyImages(uuid: String!): [Image]
     me: User
   }
 
@@ -190,5 +209,6 @@ export const typeDefs = gql`
     signS3(filename: String!, filetype: String!): S3Payload!
     saveAttachment(url: String!, title: String!, uuid: String!): Boolean
     deleteAttachment(id: Int): Boolean
+    savePropertyImages(images: [ImagesInput]!, uuid: String!): Boolean
   }
 `;

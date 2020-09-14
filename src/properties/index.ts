@@ -198,8 +198,6 @@ export const saveProperty = async (
         country,
         lat,
         lon,
-        mainPicture,
-        mainPictureLowRes,
         bathrooms,
         bedrooms,
         currency,
@@ -212,7 +210,6 @@ export const saveProperty = async (
         description,
         videoUrl,
         videoType,
-        pictures,
       } = args?.property;
 
       let data = {
@@ -239,31 +236,6 @@ export const saveProperty = async (
         videoUrl,
         videoType,
       } as object;
-
-      if (pictures) {
-        if (propertyUpdated.pictures && propertyUpdated.pictures.length > 0) {
-          data = {
-            ...data,
-            pictures: {
-              set: propertyUpdated.pictures.concat(pictures),
-            },
-          };
-        } else {
-          data = {
-            ...data,
-            pictures: {
-              set: pictures,
-            },
-          };
-        }
-      }
-      if (mainPicture) {
-        data = {
-          ...data,
-          mainPicture,
-          mainPictureLowRes,
-        };
-      }
 
       propertyUpdated = await ctx.prisma.property.update({
         where: {
