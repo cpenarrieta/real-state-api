@@ -102,7 +102,6 @@ export const typeDefs = gql`
     province: String
     zipCode: String
     country: String
-    pictures: [String]
     floorPlans: [String]
     mainPicture: String
     mainPictureLowRes: String
@@ -146,7 +145,6 @@ export const typeDefs = gql`
     province: String
     zipCode: String
     country: String
-    pictures: [String]
     floorPlans: [String]
     mainPicture: String
     mainPictureLowRes: String

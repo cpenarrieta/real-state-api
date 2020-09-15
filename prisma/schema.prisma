@@ -49,7 +49,6 @@ model property {
   city               String?
   province           String?
   zipCode            String?
-  pictures           String[]
   floorPlans         String[]
   videos             String[]
   soldAt             DateTime?
