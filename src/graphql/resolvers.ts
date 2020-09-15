@@ -11,7 +11,7 @@ import {
   deleteAttachment,
   propertyAttachments,
 } from "../attachments";
-import { propertyImages, savePropertyImages } from "../images";
+import { propertyImages, savePropertyImages, deleteImage } from "../images";
 
 export const resolvers = {
   Query: {
@@ -31,5 +31,6 @@ export const resolvers = {
     saveAttachment: saveAttachment,
     deleteAttachment: deleteAttachment,
     savePropertyImages,
+    deleteImage,
   },
 };

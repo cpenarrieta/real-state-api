@@ -45,6 +45,7 @@ export const findProperty = async (ctx: MyContext, uuid: string) => {
       publishedStatus: true,
       mainPicture: true,
       mainPictureLowRes: true,
+      mainImageId: true,
       webPaidUntil: true,
       username: true,
       videoUrl: true,
@@ -111,6 +112,7 @@ export const myProperties = async (
       publishedStatus: true,
       mainPicture: true,
       mainPictureLowRes: true,
+      mainImageId: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -208,6 +210,9 @@ export const saveProperty = async (
         description,
         videoUrl,
         videoType,
+        mainPicture,
+        mainPictureLowRes,
+        mainImageId,
       } = args?.property;
 
       let data = {
@@ -234,6 +239,19 @@ export const saveProperty = async (
         videoUrl,
         videoType,
       } as object;
+
+      if (mainImageId) {
+        data = {
+          ...data,
+          mainPicture,
+          mainPictureLowRes,
+          images_imagesToproperty_mainImageId: {
+            connect: {
+              id: mainImageId,
+            },
+          },
+        };
+      }
 
       propertyUpdated = await ctx.prisma.property.update({
         where: {

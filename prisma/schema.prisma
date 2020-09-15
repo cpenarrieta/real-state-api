@@ -27,50 +27,52 @@ model lead {
 }
 
 model property {
-  id                 Int               @default(autoincrement()) @id
-  title              String?
-  userId             Int               @default(autoincrement())
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @default(now())
-  uuid               String            @default(dbgenerated()) @unique
-  description        String?
-  bedrooms           Int?
-  bathrooms          Int?
-  lotSize            Int?
-  builtYear          Int?
-  grossTaxesLastYear Int?
-  openHouse          Boolean?          @default(false)
-  strata             Boolean?          @default(false)
-  price              Int?
-  hidePrice          Boolean?          @default(false)
-  community          String?
-  address1           String?
-  address2           String?
-  city               String?
-  province           String?
-  zipCode            String?
-  floorPlans         String[]
-  videos             String[]
-  soldAt             DateTime?
-  propertyType       property_type?
-  currency           currency?
-  status             property_status?  @default(ACTIVE)
-  publishedStatus    published_status? @default(DRAFT)
-  mainPicture        String?
-  country            String?
-  webPaidUntil       DateTime?
-  username           String?
-  videoUrl           String?
-  videoType          video_type?
-  lat                Float?
-  lon                Float?
-  color              String?
-  listingId          String?
-  mainPictureLowRes  String?
-  user               user              @relation(fields: [userId], references: [id])
-  attachments        attachments[]
-  images             images[]
-  lead               lead[]
+  id                                  Int               @default(autoincrement()) @id
+  title                               String?
+  userId                              Int               @default(autoincrement())
+  createdAt                           DateTime          @default(now())
+  updatedAt                           DateTime          @default(now())
+  uuid                                String            @default(dbgenerated()) @unique
+  description                         String?
+  bedrooms                            Int?
+  bathrooms                           Int?
+  lotSize                             Int?
+  builtYear                           Int?
+  grossTaxesLastYear                  Int?
+  openHouse                           Boolean?          @default(false)
+  strata                              Boolean?          @default(false)
+  price                               Int?
+  hidePrice                           Boolean?          @default(false)
+  community                           String?
+  address1                            String?
+  address2                            String?
+  city                                String?
+  province                            String?
+  zipCode                             String?
+  floorPlans                          String[]
+  videos                              String[]
+  soldAt                              DateTime?
+  propertyType                        property_type?
+  currency                            currency?
+  status                              property_status?  @default(ACTIVE)
+  publishedStatus                     published_status? @default(DRAFT)
+  mainPicture                         String?
+  country                             String?
+  webPaidUntil                        DateTime?
+  username                            String?
+  videoUrl                            String?
+  videoType                           video_type?
+  lat                                 Float?
+  lon                                 Float?
+  color                               String?
+  listingId                           String?
+  mainPictureLowRes                   String?
+  mainImageId                         Int?
+  images_imagesToproperty_mainImageId images?           @relation("imagesToproperty_mainImageId", fields: [mainImageId], references: [id])
+  user                                user              @relation(fields: [userId], references: [id])
+  attachments                         attachments[]
+  images                              images[]          @relation("images_propertyIdToproperty")
+  lead                                lead[]
 }
 
 model user {
@@ -116,16 +118,17 @@ model attachments {
 }
 
 model images {
-  id          Int       @default(autoincrement()) @id
-  title       String?
-  description String?
-  propertyId  Int       @default(dbgenerated())
-  url         String?
-  urlLowRes   String?
-  createdAt   DateTime? @default(now())
-  updatedAt   DateTime? @default(now())
-  active      Boolean?  @default(true)
-  property    property  @relation(fields: [propertyId], references: [id])
+  id                                    Int        @default(autoincrement()) @id
+  title                                 String?
+  description                           String?
+  propertyId                            Int        @default(dbgenerated())
+  url                                   String?
+  urlLowRes                             String?
+  createdAt                             DateTime?  @default(now())
+  updatedAt                             DateTime?  @default(now())
+  active                                Boolean?   @default(true)
+  property                              property   @relation("images_propertyIdToproperty", fields: [propertyId], references: [id])
+  property_imagesToproperty_mainImageId property[] @relation("imagesToproperty_mainImageId")
 }
 
 enum currency {

@@ -38,7 +38,42 @@ export const propertyImages = async (
     });
     return images;
   } catch (e) {
-    throw new ApolloError("Error getting attachments");
+    throw new ApolloError("Error getting images");
+  }
+};
+
+export const deleteImage = async (
+  parent: object,
+  args: { uuid: string; id: number },
+  ctx: MyContext
+) => {
+  const userUuid = ctx.req.user?.sub || "";
+  const propertyUuid = args?.uuid;
+  const imageId = args?.id;
+
+  const user = await findUser(ctx, userUuid);
+  const property = await findProperty(ctx, propertyUuid);
+
+  if (!property) {
+    throw new UserInputError("Invalid Property");
+  }
+
+  if (property?.userId !== user.id) {
+    throw new ApolloError("Property does not belongs to User");
+  }
+
+  try {
+    await ctx.prisma.images.update({
+      where: {
+        id: imageId,
+      },
+      data: {
+        active: false,
+      },
+    });
+    return true;
+  } catch (e) {
+    throw new ApolloError("Error deleting images");
   }
 };
 
@@ -89,7 +124,27 @@ export const savePropertyImages = async (
   });
 
   try {
-    await Promise.all(promises);
+    const resImages = await Promise.all(promises);
+
+    if (!property.mainImageId && images && images.length > 0) {
+      const firstImage = resImages[0];
+
+      await ctx.prisma.property.update({
+        where: {
+          id: property.id,
+        },
+        data: {
+          images_imagesToproperty_mainImageId: {
+            connect: {
+              id: firstImage.id,
+            },
+          },
+          mainPicture: firstImage.url,
+          mainPictureLowRes: firstImage.urlLowRes,
+        },
+      });
+    }
+
     return true;
   } catch (e) {
     throw new ApolloError("Error saving Property images");

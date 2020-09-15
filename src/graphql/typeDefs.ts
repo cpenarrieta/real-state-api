@@ -105,6 +105,7 @@ export const typeDefs = gql`
     floorPlans: [String]
     mainPicture: String
     mainPictureLowRes: String
+    mainImageId: Int
     videos: [String]
     soldAt: Date
     webPaidUntil: Date
@@ -148,6 +149,7 @@ export const typeDefs = gql`
     floorPlans: [String]
     mainPicture: String
     mainPictureLowRes: String
+    mainImageId: Int
     videos: [String]
     soldAt: Date
     propertyType: PROPERTY_TYPE
@@ -206,7 +208,8 @@ export const typeDefs = gql`
     publishProperty(propertyUuid: String): Boolean
     signS3(filename: String!, filetype: String!): S3Payload!
     saveAttachment(url: String!, title: String!, uuid: String!): Boolean
-    deleteAttachment(id: Int): Boolean
+    deleteAttachment(id: Int!): Boolean
+    deleteImage(id: Int!, uuid: String!): Boolean
     savePropertyImages(images: [ImagesInput]!, uuid: String!): Boolean
   }
 `;

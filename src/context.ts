@@ -17,7 +17,7 @@ export interface UserArgs {
   province?: string;
   zipCode?: string;
   country?: string;
-  username? :string;
+  username?: string;
 }
 
 export interface PropertyArgs {
@@ -37,8 +37,8 @@ export interface PropertyArgs {
   grossTaxesLastYear?: number;
   lat?: number;
   lon?: number;
-  listingId? : string;
-  description? : string;
+  listingId?: string;
+  description?: string;
   propertyType?:
     | "HOUSE"
     | "TOWNHOUSE"
@@ -55,6 +55,7 @@ export interface PropertyArgs {
   publishedStatus?: "DRAFT" | "PUBLISHED" | "INACTIVE" | undefined | null;
   videoUrl?: string;
   videoType?: "VIMEO" | "YOUTUBE" | undefined | null;
+  mainImageId?: number;
 }
 
 export interface AuthUser {
