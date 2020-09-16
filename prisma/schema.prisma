@@ -127,6 +127,7 @@ model images {
   createdAt                             DateTime?  @default(now())
   updatedAt                             DateTime?  @default(now())
   active                                Boolean?   @default(true)
+  order                                 Int?
   property                              property   @relation("images_propertyIdToproperty", fields: [propertyId], references: [id])
   property_imagesToproperty_mainImageId property[] @relation("imagesToproperty_mainImageId")
 }
