@@ -71,9 +71,12 @@ export const typeDefs = gql`
     urlLowRes: String
     property: [Property]
     active: Boolean
+    order: Int
   }
 
   input ImagesInput {
+    id: Int
+    order: Int
     title: String
     description: String
     url: String
@@ -211,5 +214,6 @@ export const typeDefs = gql`
     deleteAttachment(id: Int!): Boolean
     deleteImage(id: Int!, uuid: String!): Boolean
     savePropertyImages(images: [ImagesInput]!, uuid: String!): Boolean
+    updateImagesOrder(images: [ImagesInput]!, uuid: String!): Boolean
   }
 `;

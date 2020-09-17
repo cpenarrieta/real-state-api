@@ -34,6 +34,10 @@ export const propertyImages = async (
         urlLowRes: true,
         title: true,
         description: true,
+        order: true,
+      },
+      orderBy: {
+        order: "asc",
       },
     });
     return images;
@@ -107,13 +111,31 @@ export const savePropertyImages = async (
     throw new ApolloError("Property does not belongs to User");
   }
 
-  const promises = images.map((image) => {
+  const currentImages = await ctx.prisma.images.findMany({
+    where: {
+      active: true,
+    },
+    orderBy: [
+      {
+        order: "desc",
+      },
+    ],
+    take: 1,
+  });
+
+  let lastOrder = 0;
+  if (currentImages && currentImages.length > 0) {
+    lastOrder = currentImages[0].order || 0;
+  }
+
+  const promises = images.map((image, key) => {
     return ctx.prisma.images.create({
       data: {
         title: image.title,
         description: image.description,
         url: image.url,
         urlLowRes: image.urlLowRes,
+        order: lastOrder + key + 1,
         property: {
           connect: {
             id: property.id,
@@ -145,6 +167,53 @@ export const savePropertyImages = async (
       });
     }
 
+    return true;
+  } catch (e) {
+    throw new ApolloError("Error saving Property images");
+  }
+};
+
+export const updateImagesOrder = async (
+  parent: object,
+  args: {
+    uuid: string;
+    images: [
+      {
+        id: number;
+        order: number;
+      }
+    ];
+  },
+  ctx: MyContext
+) => {
+  const userUuid = ctx.req.user?.sub || "";
+  const propertyUuid = args?.uuid;
+  const images = args?.images;
+
+  const user = await findUser(ctx, userUuid);
+  const property = await findProperty(ctx, propertyUuid);
+
+  if (!property) {
+    throw new UserInputError("Invalid Property");
+  }
+
+  if (property?.userId !== user.id) {
+    throw new ApolloError("Property does not belongs to User");
+  }
+
+  const promises = images.map((image, key) => {
+    return ctx.prisma.images.update({
+      where: {
+        id: image.id,
+      },
+      data: {
+        order: image.order,
+      },
+    });
+  });
+
+  try {
+    await Promise.all(promises);
     return true;
   } catch (e) {
     throw new ApolloError("Error saving Property images");
