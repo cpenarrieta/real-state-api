@@ -113,6 +113,7 @@ export const myProperties = async (
       mainPicture: true,
       mainPictureLowRes: true,
       mainImageId: true,
+      color: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -213,6 +214,9 @@ export const saveProperty = async (
         mainPicture,
         mainPictureLowRes,
         mainImageId,
+        color,
+        hidePrice,
+        strata,
       } = args?.property;
 
       let data = {
@@ -238,6 +242,9 @@ export const saveProperty = async (
         description,
         videoUrl,
         videoType,
+        color,
+        hidePrice,
+        strata,
       } as object;
 
       if (mainImageId) {

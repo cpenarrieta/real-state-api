@@ -56,6 +56,9 @@ export interface PropertyArgs {
   videoUrl?: string;
   videoType?: "VIMEO" | "YOUTUBE" | undefined | null;
   mainImageId?: number;
+  color?: string;
+  hidePrice?: boolean;
+  strata?: boolean;
 }
 
 export interface AuthUser {
