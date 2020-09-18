@@ -34,6 +34,14 @@ export const typeDefs = gql`
     YOUTUBE
   }
 
+  enum LEAD_STATUS {
+    ARCHIVED
+    BUYER
+    CONTACTED
+    PENDING
+    STARRED
+  }
+
   type User {
     uuid: ID
     email: String
@@ -71,6 +79,24 @@ export const typeDefs = gql`
     urlLowRes: String
     property: [Property]
     active: Boolean
+    order: Int
+  }
+
+  type Lead {
+    id: Int
+    name: String
+    phone: String
+    email: String
+    address1: String
+    address2: String
+    city: String
+    province: String
+    zipCode: String
+    country: String
+    visitorId: String
+    leadStatus: LEAD_STATUS
+    createdAt: Date
+    updatedAt: Date
     order: Int
   }
 
@@ -201,6 +227,7 @@ export const typeDefs = gql`
     property(uuid: String!): Property
     attachments(uuid: String!): [Attachment]
     propertyImages(uuid: String!): [Image]
+    propertyLeads(uuid: String!): [Lead]
     me: User
   }
 

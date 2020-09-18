@@ -8,22 +8,22 @@ datasource db {
 }
 
 model lead {
-  id          Int          @default(autoincrement()) @id
-  name        String?
-  phone       String?
-  email       String?
-  address1    String?
-  address2    String?
-  city        String?
-  province    String?
-  zipCode     String?
-  country     String?
-  propertyId  Int          @default(autoincrement())
-  lead_status lead_status? @default(PENDING)
-  visitorId   String?
-  createdAt   DateTime?    @default(now())
-  updatedAt   DateTime?    @default(now())
-  property    property     @relation(fields: [propertyId], references: [id])
+  id         Int          @default(autoincrement()) @id
+  name       String?
+  phone      String?
+  email      String?
+  address1   String?
+  address2   String?
+  city       String?
+  province   String?
+  zipCode    String?
+  country    String?
+  propertyId Int          @default(autoincrement())
+  leadStatus lead_status? @default(PENDING)
+  visitorId  String?
+  createdAt  DateTime?    @default(now())
+  updatedAt  DateTime?    @default(now())
+  property   property     @relation(fields: [propertyId], references: [id])
 }
 
 model property {

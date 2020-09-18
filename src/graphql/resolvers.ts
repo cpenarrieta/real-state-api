@@ -17,6 +17,7 @@ import {
   deleteImage,
   updateImagesOrder,
 } from "../images";
+import { propertyLeads } from "../lead";
 
 export const resolvers = {
   Query: {
@@ -26,6 +27,7 @@ export const resolvers = {
     me: me,
     attachments: propertyAttachments,
     propertyImages,
+    propertyLeads,
   },
   Mutation: {
     saveProperty: saveProperty,
