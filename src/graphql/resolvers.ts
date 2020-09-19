@@ -17,7 +17,7 @@ import {
   deleteImage,
   updateImagesOrder,
 } from "../images";
-import { propertyLeads } from "../lead";
+import { propertyLeads, updateLead } from "../lead";
 
 export const resolvers = {
   Query: {
@@ -40,5 +40,6 @@ export const resolvers = {
     savePropertyImages,
     deleteImage,
     updateImagesOrder,
+    updateLead,
   },
 };

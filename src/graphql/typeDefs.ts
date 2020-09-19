@@ -242,5 +242,6 @@ export const typeDefs = gql`
     deleteImage(id: Int!, uuid: String!): Boolean
     savePropertyImages(images: [ImagesInput]!, uuid: String!): Boolean
     updateImagesOrder(images: [ImagesInput]!, uuid: String!): Boolean
+    updateLead(id: Int!, uuid: String!, leadStatus: LEAD_STATUS!): Boolean
   }
 `;
