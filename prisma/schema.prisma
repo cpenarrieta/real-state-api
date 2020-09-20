@@ -23,6 +23,7 @@ model lead {
   visitorId  String?
   createdAt  DateTime?    @default(now())
   updatedAt  DateTime?    @default(now())
+  notes      String?
   property   property     @relation(fields: [propertyId], references: [id])
 }
 

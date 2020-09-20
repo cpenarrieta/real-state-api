@@ -71,6 +71,17 @@ export const typeDefs = gql`
     active: Boolean
   }
 
+  type LeadAnalytic {
+    id: Int
+    today: Int
+    yesterday: Int
+    last7Days: Int
+    last15Days: Int
+    last30Days: Int
+    last180Days: Int
+    totalViews: Int
+  }
+
   type Image {
     id: Int
     title: String
@@ -98,6 +109,7 @@ export const typeDefs = gql`
     createdAt: Date
     updatedAt: Date
     order: Int
+    notes: String
   }
 
   input ImagesInput {
@@ -229,6 +241,7 @@ export const typeDefs = gql`
     propertyImages(uuid: String!): [Image]
     propertyLeads(uuid: String!): [Lead]
     me: User
+    leadAnalytics(id: Int!, uuid: String!): LeadAnalytic
   }
 
   type Mutation {
@@ -242,6 +255,6 @@ export const typeDefs = gql`
     deleteImage(id: Int!, uuid: String!): Boolean
     savePropertyImages(images: [ImagesInput]!, uuid: String!): Boolean
     updateImagesOrder(images: [ImagesInput]!, uuid: String!): Boolean
-    updateLead(id: Int!, uuid: String!, leadStatus: LEAD_STATUS!): Boolean
+    updateLead(id: Int!, uuid: String!, leadStatus: LEAD_STATUS!, notes: String): Boolean
   }
 `;
