@@ -18,6 +18,7 @@ import {
   updateImagesOrder,
 } from "../images";
 import { propertyLeads, updateLead, leadAnalytics } from "../lead";
+import { propertyAnalytics } from "../analytics";
 
 export const resolvers = {
   Query: {
@@ -29,6 +30,7 @@ export const resolvers = {
     propertyImages,
     propertyLeads,
     leadAnalytics,
+    propertyAnalytics,
   },
   Mutation: {
     saveProperty: saveProperty,

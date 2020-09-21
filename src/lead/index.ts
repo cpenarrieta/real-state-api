@@ -127,12 +127,12 @@ export const leadAnalytics = async (
         SUM(CASE WHEN date_trunc('day', v."createdAt") > current_date - interval '180 days' THEN 1 ELSE 0 END) as "last180Days",
         count(*) as "totalViews"
       FROM public.lead as l 
-        inner join public.visitor as v on l."visitorId" = v."visitorId"
+        inner join public.visitor as v on l."visitorId" = v."visitorId" and l."propertyId" = v."propertyId"
       Where l.id = ${id} and v."createdAt" > current_date - interval '180 days';
     `;
 
     return result && result.length ? result[0] : [];
   } catch (e) {
-    throw new ApolloError("Error updating leads");
+    throw new ApolloError("Error getting leadAnalytics");
   }
 };

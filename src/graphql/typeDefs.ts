@@ -82,6 +82,13 @@ export const typeDefs = gql`
     totalViews: Int
   }
 
+  type PropertyAnalytic {
+    id: Int
+    visits: LeadAnalytic
+    leads: LeadAnalytic
+    users: LeadAnalytic
+  }
+
   type Image {
     id: Int
     title: String
@@ -242,6 +249,7 @@ export const typeDefs = gql`
     propertyLeads(uuid: String!): [Lead]
     me: User
     leadAnalytics(id: Int!, uuid: String!): LeadAnalytic
+    propertyAnalytics(uuid: String!): PropertyAnalytic
   }
 
   type Mutation {
