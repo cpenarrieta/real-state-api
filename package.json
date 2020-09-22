@@ -10,20 +10,20 @@
   "author": "Cristian Penarrieta",
   "license": "ISC",
   "devDependencies": {
-    "@prisma/cli": "^2.6.2",
+    "@prisma/cli": "^2.7.1",
     "@types/cors": "^2.8.7",
     "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.8",
     "@types/graphql": "^14.5.0",
-    "@types/node": "^14.6.4",
+    "@types/node": "^14.11.2",
     "nodemon": "^2.0.4",
     "ts-node": "9.0.0",
-    "typescript": "4.0.2"
+    "typescript": "4.0.3"
   },
   "dependencies": {
-    "@prisma/client": "^2.6.2",
-    "apollo-server-express": "^2.17.0",
-    "aws-sdk": "^2.751.0",
+    "@prisma/client": "^2.7.1",
+    "apollo-server-express": "^2.18.0",
+    "aws-sdk": "^2.757.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -34,6 +34,6 @@
     "graphql": "^15.3.0",
     "hashids": "^2.2.1",
     "jwks-rsa": "^1.9.0",
-    "stripe": "^8.92.0"
+    "stripe": "^8.97.0"
   }
 }
