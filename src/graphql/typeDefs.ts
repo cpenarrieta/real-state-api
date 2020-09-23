@@ -61,6 +61,7 @@ export const typeDefs = gql`
     updatedAt: Date
     property: [Property]
     username: String
+    smallBio: String
   }
 
   type Attachment {
@@ -228,6 +229,7 @@ export const typeDefs = gql`
     zipCode: String
     country: String
     username: String
+    smallBio: String
   }
 
   input AttachmentInput {
@@ -247,6 +249,7 @@ export const typeDefs = gql`
     attachments(uuid: String!): [Attachment]
     propertyImages(uuid: String!): [Image]
     propertyLeads(uuid: String!): [Lead]
+    otherProperties(uuid: String!): [Property]
     me: User
     leadAnalytics(id: Int!, uuid: String!): LeadAnalytic
     propertyAnalytics(uuid: String!): PropertyAnalytic

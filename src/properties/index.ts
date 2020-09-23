@@ -145,6 +145,49 @@ export const myProperty = async (
   return property;
 };
 
+export const otherProperties = async (
+  parent: object,
+  args: { uuid: string },
+  ctx: MyContext
+) => {
+  const userUuid = ctx.req.user?.sub || "";
+  const propertyUuid = args?.uuid;
+  const user = await findUser(ctx, userUuid);
+
+  const property = await findProperty(ctx, propertyUuid);
+
+  if (!property) {
+    throw new UserInputError("Invalid Property");
+  }
+
+  if (property?.userId !== user.id) {
+    throw new ApolloError("Property does not belongs to User");
+  }
+
+  return await ctx.prisma.property.findMany({
+    select: {
+      title: true,
+      uuid: true,
+      bedrooms: true,
+      bathrooms: true,
+      price: true,
+      mainPictureLowRes: true,
+      currency: true,
+      status: true,
+      city: true,
+    },
+    where: {
+      username: user.username,
+      publishedStatus: "PUBLISHED",
+      status: "ACTIVE",
+      uuid: {
+        not: property.uuid,
+      },
+    },
+    take: 6,
+  });
+};
+
 export const saveProperty = async (
   parent: object,
   args: { property: PropertyArgs },

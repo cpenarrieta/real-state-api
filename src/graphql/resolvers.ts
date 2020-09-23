@@ -4,6 +4,7 @@ import {
   myProperty,
   saveProperty,
   publishProperty,
+  otherProperties,
 } from "../properties";
 import { signS3 } from "../services/signS3";
 import {
@@ -25,12 +26,13 @@ export const resolvers = {
     users: allUsers,
     properties: myProperties,
     property: myProperty,
-    me: me,
+    me,
     attachments: propertyAttachments,
     propertyImages,
     propertyLeads,
     leadAnalytics,
     propertyAnalytics,
+    otherProperties,
   },
   Mutation: {
     saveProperty: saveProperty,

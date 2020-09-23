@@ -18,6 +18,7 @@ export interface UserArgs {
   zipCode?: string;
   country?: string;
   username?: string;
+  smallBio?: string;
 }
 
 export interface PropertyArgs {
