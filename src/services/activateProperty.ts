@@ -59,16 +59,16 @@ export const activateProperty = async (
     },
   });
 
-  if (userUuid) {
-    await prisma.user.update({
-      where: {
-        uuid: userUuid,
-      },
-      data: {
-        stripeId: session?.customer,
-      },
-    });
-  }
+  // if (userUuid) {
+  //   await prisma.user.update({
+  //     where: {
+  //       uuid: userUuid,
+  //     },
+  //     data: {
+  //       stripeId: session?.customer,
+  //     },
+  //   });
+  // }
 
   // TODO: create Order
   //   ==== orders ====

@@ -1,5 +1,6 @@
 import { MyContext, UserArgs } from "../context";
 import { AuthenticationError } from "apollo-server-express";
+import { stripe } from "../services/stripe";
 
 export const findUser = async (ctx: MyContext, uuid: string) => {
   const user = await ctx.prisma.user.findOne({
@@ -60,7 +61,7 @@ export const verifyUser = async (
 
   if (!uuid) return false;
 
-  await ctx.prisma.user.upsert({
+  const user = await ctx.prisma.user.upsert({
     create: {
       uuid,
     },
@@ -71,6 +72,18 @@ export const verifyUser = async (
       uuid,
     },
   });
+
+  if (user.uuid && !user.stripeId) {
+    const customer = await stripe.customers.create();
+    await ctx.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        stripeId: customer.id,
+      },
+    });
+  }
 
   return true;
 };

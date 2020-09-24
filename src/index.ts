@@ -5,13 +5,12 @@ import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "./graphql/typeDefs";
 import { resolvers } from "./graphql/resolvers";
 import cors from "cors";
-import { createContext, MyRequest } from "./context";
+import prisma, { createContext, MyRequest } from "./context";
 import jwt from "express-jwt";
 import jwks from "jwks-rsa";
 import bodyParser from "body-parser";
 import { activateProperty } from "./services/activateProperty";
-
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+import { stripe } from "../src/services/stripe";
 
 const requireAuth = jwt({
   secret: jwks.expressJwtSecret({
@@ -34,14 +33,40 @@ const requireAuth = jwt({
     })
   );
 
-  // TODO change this to retrieve list of available Products with Prices
-  app.get("/config", async (req, res) => {
-    const price = await stripe.prices.retrieve(process.env.PRICE);
+  app.get("/config", requireAuth, async (req: MyRequest, res) => {
+    const userUuid = req.user?.sub;
+    const user = await prisma.user.findOne({
+      where: {
+        uuid: userUuid,
+      },
+      select: {
+        country: true,
+      },
+    });
+
+    let lifetime, oneYear;
+
+    if (user && user.country === "US") {
+      lifetime = await stripe.prices.retrieve("price_1HUnynJTQgPl8Cr4f0eF9Tbv");
+      oneYear = await stripe.prices.retrieve("price_1HUneuJTQgPl8Cr4RpMANhId");
+    } else if (user && user.country === "CA") {
+      lifetime = await stripe.prices.retrieve("price_1HUnynJTQgPl8Cr49GidXV5a");
+      oneYear = await stripe.prices.retrieve("price_1HUneuJTQgPl8Cr43Ll1vIZD");
+    } else {
+      res.send({ error: true });
+    }
 
     res.send({
-      publicKey: process.env.STRIPE_PUBLISHABLE_KEY,
-      unitAmount: price.unit_amount,
-      currency: price.currency,
+      lifetime: {
+        id: lifetime.id,
+        currency: lifetime.currency,
+        amount: lifetime.unit_amount / 100,
+      },
+      oneYear: {
+        id: oneYear.id,
+        currency: oneYear.currency,
+        amount: oneYear.unit_amount / 100,
+      },
     });
   });
 
@@ -58,15 +83,23 @@ const requireAuth = jwt({
     requireAuth,
     async (req: MyRequest, res) => {
       const domainURL = process.env.APP_URL;
-      const { productType, propertyId, email } = req.body;
+      const { productType, propertyId } = req.body;
       const userUuid = req.user?.sub;
       const price = await stripe.prices.retrieve(productType);
+      const user = await prisma.user.findOne({
+        where: {
+          uuid: userUuid,
+        },
+        select: {
+          stripeId: true,
+        },
+      });
 
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         mode: "payment",
         locale: "en",
-        customer_email: email,
+        customer: user?.stripeId,
         line_items: [
           {
             price_data: {
@@ -83,7 +116,7 @@ const requireAuth = jwt({
           userUuid,
         },
         success_url: `${domainURL}/payment-success?session_id={CHECKOUT_SESSION_ID}&propertyId=${propertyId}`,
-        cancel_url: `${domainURL}/payment/${propertyId}`, // req.headers.referer
+        cancel_url: req.headers.referer,
       });
 
       res.send({
