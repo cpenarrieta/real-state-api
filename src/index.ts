@@ -5,12 +5,18 @@ import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "./graphql/typeDefs";
 import { resolvers } from "./graphql/resolvers";
 import cors from "cors";
-import prisma, { createContext, MyRequest } from "./context";
+import { createContext, MyRequest } from "./context";
 import jwt from "express-jwt";
 import jwks from "jwks-rsa";
 import bodyParser from "body-parser";
 import { activateProperty } from "./services/activateProperty";
 import { stripe } from "../src/services/stripe";
+import {
+  PRICE_ID_LIFETIME_US,
+  PRICE_ID_YEAR_US,
+  PRICE_ID_LIFETIME_CA,
+  PRICE_ID_YEAR_CA,
+} from "./priceUtil";
 
 const requireAuth = jwt({
   secret: jwks.expressJwtSecret({
@@ -33,25 +39,16 @@ const requireAuth = jwt({
     })
   );
 
-  app.get("/config", requireAuth, async (req: MyRequest, res) => {
-    const userUuid = req.user?.sub;
-    const user = await prisma.user.findOne({
-      where: {
-        uuid: userUuid,
-      },
-      select: {
-        country: true,
-      },
-    });
-
+  app.get("/config/:country", async (req: MyRequest, res) => {
+    const country = req.params.country;
     let lifetime, oneYear;
 
-    if (user && user.country === "US") {
-      lifetime = await stripe.prices.retrieve("price_1HUnynJTQgPl8Cr4f0eF9Tbv");
-      oneYear = await stripe.prices.retrieve("price_1HUneuJTQgPl8Cr4RpMANhId");
-    } else if (user && user.country === "CA") {
-      lifetime = await stripe.prices.retrieve("price_1HUnynJTQgPl8Cr49GidXV5a");
-      oneYear = await stripe.prices.retrieve("price_1HUneuJTQgPl8Cr43Ll1vIZD");
+    if (country === "US") {
+      lifetime = await stripe.prices.retrieve(PRICE_ID_LIFETIME_US);
+      oneYear = await stripe.prices.retrieve(PRICE_ID_YEAR_US);
+    } else if (country === "CA") {
+      lifetime = await stripe.prices.retrieve(PRICE_ID_LIFETIME_CA);
+      oneYear = await stripe.prices.retrieve(PRICE_ID_YEAR_CA);
     } else {
       res.send({ error: true });
     }
@@ -83,40 +80,34 @@ const requireAuth = jwt({
     requireAuth,
     async (req: MyRequest, res) => {
       const domainURL = process.env.APP_URL;
-      const { productType, propertyId } = req.body;
+      const { productType, propertyId, email } = req.body;
       const userUuid = req.user?.sub;
       const price = await stripe.prices.retrieve(productType);
-      const user = await prisma.user.findOne({
-        where: {
-          uuid: userUuid,
-        },
-        select: {
-          stripeId: true,
-        },
-      });
+      const metadata = {
+        propertyId,
+        priceId: price.id,
+        userUuid,
+      };
 
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         mode: "payment",
         locale: "en",
-        customer: user?.stripeId,
+        customer_email: email,
         line_items: [
           {
-            price_data: {
-              currency: price.currency,
-              product: price.product,
-              unit_amount: price.unit_amount,
-            },
+            price: price.id,
             quantity: 1,
           },
         ],
-        metadata: {
-          propertyId,
-          product: price.product,
-          userUuid,
-        },
+        metadata,
         success_url: `${domainURL}/payment-success?session_id={CHECKOUT_SESSION_ID}&propertyId=${propertyId}`,
         cancel_url: req.headers.referer,
+        client_reference_id: propertyId,
+        payment_intent_data: {
+          receipt_email: email,
+          metadata,
+        },
       });
 
       res.send({
@@ -142,18 +133,10 @@ const requireAuth = jwt({
         response.status(400).send(`Webhook Error: ${err.message}`);
       }
 
-      // TODO how to pass metadata to charge.succeeded
       switch (event.type) {
-        case "checkout.session.completed":
+        case "charge.succeeded":
           const sessionComplete = event.data.object;
-          const { product, userUuid } = sessionComplete?.metadata;
-          const productData = await stripe.products.retrieve(product);
-
-          await activateProperty(
-            sessionComplete,
-            productData?.metadata?.type,
-            userUuid || ""
-          );
+          await activateProperty(sessionComplete);
           break;
         default:
           return response.status(400).end();

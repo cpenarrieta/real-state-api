@@ -74,6 +74,7 @@ model property {
   attachments                         attachments[]
   images                              images[]          @relation("images_propertyIdToproperty")
   lead                                lead[]
+  order                               order[]
 }
 
 model user {
@@ -97,6 +98,7 @@ model user {
   stripeId      String?
   username      String?
   smallBio      String?
+  order         order[]
   property      property[]
 }
 
@@ -131,6 +133,37 @@ model images {
   order                                 Int?
   property                              property   @relation("images_propertyIdToproperty", fields: [propertyId], references: [id])
   property_imagesToproperty_mainImageId property[] @relation("imagesToproperty_mainImageId")
+}
+
+model order {
+  id              Int       @default(autoincrement()) @id
+  userId          Int       @default(autoincrement())
+  propertyId      Int       @default(autoincrement())
+  sessionId       String?
+  chargeId        String?
+  paymentIntentId String?
+  customerId      String?
+  priceId         String?
+  priceType       String?
+  priceCountry    String?
+  amountSubtotal  Int?
+  amountTotal     Int?
+  paymentStatus   String?
+  refunded        Boolean?
+  receiptUrl      String?
+  paymentType     String?
+  currency        String?
+  billingCountry  String?
+  billingPostal   String?
+  billingEmail    String?
+  billingName     String?
+  paymentMethod   String?
+  status          String?
+  createdAt       DateTime? @default(now())
+  updatedAt       DateTime? @default(now())
+  paid            Boolean?
+  property        property  @relation(fields: [propertyId], references: [id])
+  user            user      @relation(fields: [userId], references: [id])
 }
 
 enum currency {
