@@ -105,12 +105,44 @@ export const activateProperty = async (session: {
   try {
     if (!session) return;
 
-    await prisma.order.create({
-      data: {
+    await prisma.order.upsert({
+      where: {
+        chargeId: session.id,
+      },
+      create: {
         chargeId: session.id,
         paymentIntentId: session.payment_intent,
         customerId: session.customer,
-
+        priceId: priceId,
+        priceType: price.type,
+        priceCountry: price.country,
+        amountTotal: session.amount,
+        paid: session.paid,
+        refunded: session.refunded,
+        receiptUrl: session.receipt_url,
+        paymentType: session.payment_method_details?.type,
+        currency: session.currency,
+        status: session.status,
+        billingCountry: session.billing_details?.address?.country,
+        billingPostal: session.billing_details?.address?.postal_code,
+        billingEmail: session.billing_details?.email,
+        billingName: session.billing_details?.name,
+        paymentMethod: session.payment_method,
+        property: {
+          connect: {
+            uuid: propertyId,
+          },
+        },
+        user: {
+          connect: {
+            id: property.userId,
+          },
+        },
+      },
+      update: {
+        chargeId: session.id,
+        paymentIntentId: session.payment_intent,
+        customerId: session.customer,
         priceId: priceId,
         priceType: price.type,
         priceCountry: price.country,

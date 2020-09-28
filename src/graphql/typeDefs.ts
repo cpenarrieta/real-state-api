@@ -242,6 +242,29 @@ export const typeDefs = gql`
     url: String!
   }
 
+  type Order {
+    chargeId: ID
+    paymentIntentId: String
+    customerId: String
+    priceId: String
+    priceType: String
+    priceCountry: String
+    amountTotal: Int
+    refunded: Boolean
+    paid: Boolean
+    receiptUrl: String
+    paymentType: String
+    currency: String
+    billingCountry: String
+    billingPostal: String
+    billingEmail: String
+    billingName: String
+    paymentMethod: String
+    status: String
+    createdAt: Date
+    updatedAt: Date
+  }
+
   type Query {
     users: [User]
     properties: [Property]
@@ -253,6 +276,8 @@ export const typeDefs = gql`
     me: User
     leadAnalytics(id: Int!, uuid: String!): LeadAnalytic
     propertyAnalytics(uuid: String!): PropertyAnalytic
+    propertyOrders(uuid: String!): [Order]
+    orders: [Order]
   }
 
   type Mutation {

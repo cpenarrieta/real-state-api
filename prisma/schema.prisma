@@ -140,15 +140,13 @@ model order {
   userId          Int       @default(autoincrement())
   propertyId      Int       @default(autoincrement())
   sessionId       String?
-  chargeId        String?
+  chargeId        String?   @unique
   paymentIntentId String?
   customerId      String?
   priceId         String?
   priceType       String?
   priceCountry    String?
-  amountSubtotal  Int?
   amountTotal     Int?
-  paymentStatus   String?
   refunded        Boolean?
   receiptUrl      String?
   paymentType     String?
