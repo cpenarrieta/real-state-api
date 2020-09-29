@@ -175,6 +175,7 @@ export const otherProperties = async (
       currency: true,
       status: true,
       city: true,
+      hidePrice: true,
     },
     where: {
       username: user.username,
@@ -183,6 +184,9 @@ export const otherProperties = async (
       uuid: {
         not: property.uuid,
       },
+      mainPicture: {
+        not: null
+      }
     },
     take: 6,
   });
@@ -300,6 +304,13 @@ export const saveProperty = async (
               id: mainImageId,
             },
           },
+        };
+      }
+
+      if (!propertyUpdated.title && !title && address1) {
+        data = {
+          ...data,
+          title: address1,
         };
       }
 
