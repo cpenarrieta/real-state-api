@@ -292,5 +292,7 @@ export const typeDefs = gql`
     savePropertyImages(images: [ImagesInput]!, uuid: String!): Boolean
     updateImagesOrder(images: [ImagesInput]!, uuid: String!): Boolean
     updateLead(id: Int!, uuid: String!, leadStatus: LEAD_STATUS!, notes: String): Boolean
+    deleteProperty(uuid: String!): Boolean
+    markAsSold(uuid: String!, undo: Boolean): Boolean
   }
 `;

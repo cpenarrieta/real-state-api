@@ -5,6 +5,8 @@ import {
   saveProperty,
   publishProperty,
   otherProperties,
+  deleteProperty,
+  markAsSold,
 } from "../properties";
 import { signS3 } from "../services/signS3";
 import {
@@ -49,5 +51,7 @@ export const resolvers = {
     deleteImage,
     updateImagesOrder,
     updateLead,
+    deleteProperty,
+    markAsSold,
   },
 };

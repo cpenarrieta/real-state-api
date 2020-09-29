@@ -362,3 +362,78 @@ export const publishProperty = async (
     )}`
   );
 };
+
+export const deleteProperty = async (
+  parent: object,
+  args: { uuid: string },
+  ctx: MyContext
+) => {
+  const userUuid = ctx.req.user?.sub || "";
+  const propertyUuid = args?.uuid;
+  const user = await findUser(ctx, userUuid);
+
+  const property = await findProperty(ctx, propertyUuid);
+
+  if (!property) {
+    throw new UserInputError("Invalid Property");
+  }
+
+  if (property?.userId !== user.id) {
+    throw new ApolloError("Property does not belongs to User");
+  }
+
+  await ctx.prisma.property.update({
+    where: {
+      uuid: propertyUuid,
+    },
+    data: {
+      status: "INACTIVE",
+      publishedStatus: "INACTIVE",
+    },
+  });
+
+  return true;
+};
+
+export const markAsSold = async (
+  parent: object,
+  args: { uuid: string; undo: boolean },
+  ctx: MyContext
+) => {
+  const userUuid = ctx.req.user?.sub || "";
+  const propertyUuid = args?.uuid;
+  const undo = args?.undo;
+  const user = await findUser(ctx, userUuid);
+
+  const property = await findProperty(ctx, propertyUuid);
+
+  if (!property) {
+    throw new UserInputError("Invalid Property");
+  }
+
+  if (property?.userId !== user.id) {
+    throw new ApolloError("Property does not belongs to User");
+  }
+
+  if (!undo) {
+    await ctx.prisma.property.update({
+      where: {
+        uuid: propertyUuid,
+      },
+      data: {
+        status: "SOLD",
+      },
+    });
+  } else {
+    await ctx.prisma.property.update({
+      where: {
+        uuid: propertyUuid,
+      },
+      data: {
+        status: property.status === "SOLD" ? "ACTIVE" : property.status,
+      },
+    });
+  }
+
+  return true;
+};

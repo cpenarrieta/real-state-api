@@ -38,6 +38,9 @@ export const orders = async (
         priceType: true,
         receiptUrl: true,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     return orders;
   } catch (e) {
@@ -79,6 +82,9 @@ export const propertyOrders = async (
         paymentType: true,
         priceType: true,
         receiptUrl: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
     return orders;
