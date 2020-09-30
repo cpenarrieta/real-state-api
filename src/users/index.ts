@@ -60,19 +60,24 @@ export const verifyUser = async (
 
   if (!uuid) return false;
 
-  await ctx.prisma.user.upsert({
-    create: {
-      uuid,
-    },
-    update: {
-      uuid,
-    },
+  const user = await ctx.prisma.user.findOne({
     where: {
+      uuid,
+    },
+    select: {
+      uuid: true,
+    },
+  });
+
+  if (user) return "existing";
+
+  await ctx.prisma.user.create({
+    data: {
       uuid,
     },
   });
 
-  return true;
+  return "new";
 };
 
 export const me = async (parent: object, args: object, ctx: MyContext) => {

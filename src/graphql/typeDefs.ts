@@ -62,6 +62,7 @@ export const typeDefs = gql`
     property: [Property]
     username: String
     smallBio: String
+    onboardingComplete: Boolean
   }
 
   type Attachment {
@@ -283,7 +284,7 @@ export const typeDefs = gql`
   type Mutation {
     saveProperty(property: PropertyInput): Property
     saveUser(user: UserInput): User
-    verifyUser: Boolean
+    verifyUser: String
     publishProperty(propertyUuid: String): Boolean
     signS3(filename: String!, filetype: String!): S3Payload!
     saveAttachment(url: String!, title: String!, uuid: String!): Boolean

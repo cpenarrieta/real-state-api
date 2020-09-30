@@ -78,28 +78,29 @@ model property {
 }
 
 model user {
-  id            Int        @default(autoincrement()) @id
-  email         String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @default(now())
-  uuid          String     @unique
-  firstName     String?
-  lastName      String?
-  phone         String?
-  address       String?
-  picture       String?
-  address1      String?
-  address2      String?
-  city          String?
-  province      String?
-  zipCode       String?
-  country       String?
-  pictureLowRes String?
-  stripeId      String?
-  username      String?
-  smallBio      String?
-  order         order[]
-  property      property[]
+  id                 Int        @default(autoincrement()) @id
+  email              String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @default(now())
+  uuid               String     @unique
+  firstName          String?
+  lastName           String?
+  phone              String?
+  address            String?
+  picture            String?
+  address1           String?
+  address2           String?
+  city               String?
+  province           String?
+  zipCode            String?
+  country            String?
+  pictureLowRes      String?
+  stripeId           String?
+  username           String?
+  smallBio           String?
+  onboardingComplete Boolean?   @default(false)
+  order              order[]
+  property           property[]
 }
 
 model visitor {
