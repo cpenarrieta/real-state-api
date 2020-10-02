@@ -62,7 +62,12 @@ export const typeDefs = gql`
     property: [Property]
     username: String
     smallBio: String
+    twitterLink: String
+    instagramLink: String
+    facebookLink: String
+    profileComplete: Boolean
     onboardingComplete: Boolean
+    duplicateUsername: Boolean
   }
 
   type Attachment {
@@ -231,6 +236,9 @@ export const typeDefs = gql`
     country: String
     username: String
     smallBio: String
+    twitterLink: String
+    instagramLink: String
+    facebookLink: String
   }
 
   input AttachmentInput {
@@ -295,5 +303,6 @@ export const typeDefs = gql`
     updateLead(id: Int!, uuid: String!, leadStatus: LEAD_STATUS!, notes: String): Boolean
     deleteProperty(uuid: String!): Boolean
     markAsSold(uuid: String!, undo: Boolean): Boolean
+    completeOnboarding: Boolean
   }
 `;

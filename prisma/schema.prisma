@@ -99,6 +99,10 @@ model user {
   username           String?
   smallBio           String?
   onboardingComplete Boolean?   @default(false)
+  profileComplete    Boolean?   @default(false)
+  twitterLink        String?
+  instagramLink      String?
+  facebookLink       String?
   order              order[]
   property           property[]
 }

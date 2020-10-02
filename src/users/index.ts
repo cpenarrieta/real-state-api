@@ -112,29 +112,80 @@ export const saveUser = async (
     pictureLowRes,
     username,
     smallBio,
+    country,
   } = args?.user;
+
+  let data = {
+    email,
+    firstName,
+    lastName,
+    phone,
+    address,
+    picture,
+    address1,
+    address2,
+    city,
+    province,
+    zipCode,
+    pictureLowRes,
+    smallBio,
+    country,
+    profileComplete: true,
+  } as object;
+
+  let duplicateUsername = false;
+  if (username && username !== user.username) {
+    const checkUsernames = await ctx.prisma.user.findMany({
+      where: {
+        username: username,
+        id: {
+          not: user.id,
+        },
+      },
+      select: {
+        uuid: true,
+      },
+      take: 1,
+    });
+
+    if (checkUsernames && checkUsernames.length >= 1) {
+      duplicateUsername = true;
+    } else {
+      data = { ...data, username };
+    }
+  }
 
   user = await ctx.prisma.user.update({
     where: {
       id: user.id,
     },
-    data: {
-      email,
-      firstName,
-      lastName,
-      phone,
-      address,
-      picture,
-      address1,
-      address2,
-      city,
-      province,
-      zipCode,
-      pictureLowRes,
-      username, // TODO verify uniqueness
-      smallBio,
-    },
+    data,
   });
 
-  return user;
+  return { ...user, duplicateUsername };
+};
+
+export const completeOnboarding = async (
+  parent: object,
+  args: object,
+  ctx: MyContext
+) => {
+  const userUuid = ctx.req.user?.sub || "";
+
+  const user = await findUser(ctx, userUuid);
+
+  if (user.profileComplete) {
+    await ctx.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        onboardingComplete: true,
+      },
+    });
+
+    return true;
+  }
+
+  return false;
 };

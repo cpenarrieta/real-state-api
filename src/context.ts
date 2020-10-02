@@ -19,6 +19,9 @@ export interface UserArgs {
   country?: string;
   username?: string;
   smallBio?: string;
+  twitterLink?: string;
+  instagramLink?: string;
+  facebookLink?: string;
 }
 
 export interface PropertyArgs {

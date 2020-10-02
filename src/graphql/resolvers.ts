@@ -1,4 +1,10 @@
-import { allUsers, verifyUser, me, saveUser } from "../users";
+import {
+  allUsers,
+  verifyUser,
+  me,
+  saveUser,
+  completeOnboarding,
+} from "../users";
 import {
   myProperties,
   myProperty,
@@ -53,5 +59,6 @@ export const resolvers = {
     updateLead,
     deleteProperty,
     markAsSold,
+    completeOnboarding,
   },
 };
