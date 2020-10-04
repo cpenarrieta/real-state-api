@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@prisma/client": "^2.8.0",
-    "apollo-server-express": "^2.18.0",
+    "apollo-server-express": "^2.18.1",
     "aws-sdk": "^2.766.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
@@ -34,6 +34,6 @@
     "graphql": "^15.3.0",
     "hashids": "^2.2.1",
     "jwks-rsa": "^1.10.1",
-    "stripe": "^8.106.0"
+    "stripe": "^8.107.0"
   }
 }

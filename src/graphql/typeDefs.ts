@@ -278,6 +278,14 @@ export const typeDefs = gql`
     image: String
   }
 
+  type Dashboard {
+    newLeads: Int
+    visits: LeadAnalytic
+    leads: LeadAnalytic
+    users: LeadAnalytic
+    properties: [Property]
+  }
+
   type Query {
     users: [User]
     properties: [Property]
@@ -292,6 +300,7 @@ export const typeDefs = gql`
     propertyAnalytics(uuid: String!): PropertyAnalytic
     propertyOrders(uuid: String!): [Order]
     orders: [Order]
+    dashboard: Dashboard
   }
 
   type Mutation {

@@ -89,14 +89,14 @@ export function createContext(req: MyRequest, res: Response): MyContext {
 }
 
 export interface LeadAnalytic {
-  id: number;
-  today: number;
-  yesterday: number;
-  last7Days: number;
-  last15Days: number;
-  last30Days: number;
-  last180Days: number;
-  totalViews: number;
+  id?: number;
+  today?: number;
+  yesterday?: number;
+  last7Days?: number;
+  last15Days?: number;
+  last30Days?: number;
+  last180Days?: number;
+  totalViews?: number;
 }
 
 export default prisma;

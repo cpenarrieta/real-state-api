@@ -57,7 +57,7 @@ export const propertyAnalytics = async (
       WITH analytics_users as (
         SELECT  "visitorId", date_trunc('day', "createdAt") as day, count(*)
         FROM public.visitor
-        where "propertyId" = ${property.id}
+        where "propertyId" = ${property.id} and "createdAt" > current_date - interval '180 days'
         Group by "visitorId", day
         ORDER BY day desc
       )
@@ -69,8 +69,7 @@ export const propertyAnalytics = async (
         SUM(CASE WHEN v.day > current_date - interval '30 days' THEN 1 ELSE 0 END) as "last30Days",
         SUM(CASE WHEN v.day > current_date - interval '180 days' THEN 1 ELSE 0 END) as "last180Days",
         count(*) as "totalViews"
-      FROM analytics_users as v
-      WHERE day > current_date - interval '180 days';
+      FROM analytics_users as v;
     `;
 
     let resObj = {

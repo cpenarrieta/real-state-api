@@ -15,6 +15,7 @@ import {
   otherProperties,
   deleteProperty,
   markAsSold,
+  dashboard,
 } from "../properties";
 import { signS3 } from "../services/signS3";
 import {
@@ -47,6 +48,7 @@ export const resolvers = {
     propertyOrders,
     orders,
     leads,
+    dashboard,
   },
   Mutation: {
     saveProperty: saveProperty,

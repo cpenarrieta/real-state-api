@@ -1,4 +1,4 @@
-import { MyContext, PropertyArgs } from "../context";
+import { MyContext, PropertyArgs, LeadAnalytic } from "../context";
 import { ApolloError, UserInputError } from "apollo-server-express";
 import { property_status, published_status } from "@prisma/client";
 import { findUser } from "../users";
@@ -62,6 +62,121 @@ export const findProperty = async (ctx: MyContext, uuid: string) => {
   }
 
   return property;
+};
+
+export const dashboard = async (
+  parent: object,
+  args: object,
+  ctx: MyContext
+) => {
+  const uuid = ctx.req.user?.sub;
+  const user = await findUser(ctx, uuid || "");
+
+  // TODO: is it faster to first get the User and then search by user instead of uuid?
+  const properties = ctx.prisma.property.findMany({
+    where: {
+      status: {
+        in: [property_status.ACTIVE, property_status.SOLD],
+      },
+      user: {
+        uuid,
+      },
+    },
+    select: {
+      uuid: true,
+      title: true,
+      address1: true,
+      address2: true,
+      zipCode: true,
+      city: true,
+      province: true,
+      country: true,
+      community: true,
+      bathrooms: true,
+      bedrooms: true,
+      builtYear: true,
+      currency: true,
+      price: true,
+      description: true,
+      videos: true,
+      floorPlans: true,
+      grossTaxesLastYear: true,
+      hidePrice: true,
+      lotSize: true,
+      openHouse: true,
+      propertyType: true,
+      status: true,
+      createdAt: true,
+      soldAt: true,
+      strata: true,
+      updatedAt: true,
+      publishedStatus: true,
+      mainPicture: true,
+      mainPictureLowRes: true,
+      mainImageId: true,
+      color: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const resultAnalytics = await ctx.prisma.$queryRaw<LeadAnalytic[]>`
+    WITH analytics_users as (
+      SELECT  v."visitorId", date_trunc('day', v."createdAt") as day, count(*)
+      FROM public.visitor as v
+      inner join public.property as p on p.id = v."propertyId" and p."userId" = ${user.id}
+      Where  v."createdAt" > current_date - interval '7 days'
+      Group by v."visitorId", day
+      ORDER BY day desc
+    )
+    
+    SELECT
+      SUM(CASE WHEN date_trunc('day', v."createdAt") = current_date THEN 1 ELSE 0 END) as "today",
+      SUM(CASE WHEN date_trunc('day', v."createdAt") = current_date - interval '1 days' THEN 1 ELSE 0 END) as "yesterday",
+      SUM(CASE WHEN date_trunc('day', v."createdAt") > current_date - interval '7 days' THEN 1 ELSE 0 END) as "last7Days"
+    FROM public.visitor as v
+      inner join public.property as p on p.id = v."propertyId" and p."userId" = ${user.id}
+    Where  v."createdAt" > current_date - interval '7 days'
+    
+    union
+    
+    SELECT
+      SUM(CASE WHEN date_trunc('day', l."createdAt") = current_date THEN 1 ELSE 0 END) as "today",
+      SUM(CASE WHEN date_trunc('day', l."createdAt") = current_date - interval '1 days' THEN 1 ELSE 0 END) as "yesterday",
+      SUM(CASE WHEN date_trunc('day', l."createdAt") > current_date - interval '7 days' THEN 1 ELSE 0 END) as "last7Days"
+    FROM public.lead as l
+      inner join public.property as p on p.id = l."propertyId" and p."userId" = ${user.id}
+    Where  l."createdAt" > current_date - interval '7 days'
+    
+    union 
+    
+    SELECT
+      SUM(CASE WHEN v.day = current_date THEN 1 ELSE 0 END) as "today",
+      SUM(CASE WHEN v.day = current_date - interval '1 days' THEN 1 ELSE 0 END) as "yesterday",
+      SUM(CASE WHEN v.day > current_date - interval '7 days' THEN 1 ELSE 0 END) as "last7Days"
+    FROM analytics_users as v
+    `;
+
+  let visits: LeadAnalytic | null | undefined = null;
+  let leads: LeadAnalytic | null | undefined = null;
+  let users: LeadAnalytic | null | undefined = null;
+  if (resultAnalytics && resultAnalytics.length >= 1) {
+    visits = resultAnalytics[0];
+    if (resultAnalytics.length >= 2) {
+      leads = resultAnalytics[1] || null;
+    }
+    if (resultAnalytics.length >= 3) {
+      users = resultAnalytics[2] || null;
+    }
+  }
+
+  return {
+    properties,
+    visits,
+    leads,
+    users,
+  };
 };
 
 export const myProperties = async (
@@ -185,8 +300,8 @@ export const otherProperties = async (
         not: property.uuid,
       },
       mainPicture: {
-        not: null
-      }
+        not: null,
+      },
     },
     take: 6,
   });
