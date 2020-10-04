@@ -8,7 +8,7 @@ datasource db {
 }
 
 model lead {
-  id         Int          @default(autoincrement()) @id
+  id         Int          @id @default(autoincrement())
   name       String?
   phone      String?
   email      String?
@@ -28,12 +28,12 @@ model lead {
 }
 
 model property {
-  id                                  Int               @default(autoincrement()) @id
+  id                                  Int               @id @default(autoincrement())
   title                               String?
   userId                              Int               @default(autoincrement())
   createdAt                           DateTime          @default(now())
   updatedAt                           DateTime          @default(now())
-  uuid                                String            @default(dbgenerated()) @unique
+  uuid                                String            @unique @default(dbgenerated())
   description                         String?
   bedrooms                            Int?
   bathrooms                           Int?
@@ -78,7 +78,7 @@ model property {
 }
 
 model user {
-  id                 Int        @default(autoincrement()) @id
+  id                 Int        @id @default(autoincrement())
   email              String?
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @default(now())
@@ -103,19 +103,20 @@ model user {
   twitterLink        String?
   instagramLink      String?
   facebookLink       String?
+  active             Boolean?   @default(true)
   order              order[]
   property           property[]
 }
 
 model visitor {
-  id         Int       @default(autoincrement()) @id
+  id         Int       @id @default(autoincrement())
   visitorId  String?
   propertyId Int       @default(autoincrement())
   createdAt  DateTime? @default(now())
 }
 
 model attachments {
-  id         Int       @default(autoincrement()) @id
+  id         Int       @id @default(autoincrement())
   title      String?
   url        String?
   createdAt  DateTime? @default(now())
@@ -126,7 +127,7 @@ model attachments {
 }
 
 model images {
-  id                                    Int        @default(autoincrement()) @id
+  id                                    Int        @id @default(autoincrement())
   title                                 String?
   description                           String?
   propertyId                            Int        @default(dbgenerated())
@@ -141,7 +142,7 @@ model images {
 }
 
 model order {
-  id              Int       @default(autoincrement()) @id
+  id              Int       @id @default(autoincrement())
   userId          Int       @default(autoincrement())
   propertyId      Int       @default(autoincrement())
   sessionId       String?

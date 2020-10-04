@@ -272,6 +272,9 @@ export const typeDefs = gql`
     status: String
     createdAt: Date
     updatedAt: Date
+    title: String
+    uuid: String
+    image: String
   }
 
   type Query {
@@ -304,5 +307,7 @@ export const typeDefs = gql`
     deleteProperty(uuid: String!): Boolean
     markAsSold(uuid: String!, undo: Boolean): Boolean
     completeOnboarding: Boolean
+    deleteAccount: Boolean
+    activateAccount: Boolean
   }
 `;

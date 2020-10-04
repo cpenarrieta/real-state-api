@@ -1,5 +1,5 @@
 import { MyContext, UserArgs } from "../context";
-import { AuthenticationError } from "apollo-server-express";
+import { ApolloError, AuthenticationError } from "apollo-server-express";
 
 export const findUser = async (ctx: MyContext, uuid: string) => {
   const user = await ctx.prisma.user.findOne({
@@ -66,9 +66,11 @@ export const verifyUser = async (
     },
     select: {
       uuid: true,
+      active: true,
     },
   });
 
+  if (!user?.active) return "inactive";
   if (user) return "existing";
 
   await ctx.prisma.user.create({
@@ -189,3 +191,58 @@ export const completeOnboarding = async (
 
   return false;
 };
+
+export const deleteAccount = async (
+  parent: object,
+  args: object,
+  ctx: MyContext
+) => {
+  const userUuid = ctx.req.user?.sub || "";
+
+  await findUser(ctx, userUuid);
+
+  try {
+    await ctx.prisma.user.update({
+      where: {
+        uuid: userUuid,
+      },
+      data: {
+        active: false,
+      },
+    });
+
+    // TODO update status on properties too
+
+    return true;
+  } catch (e) {
+    throw new ApolloError("Error on delete Account");
+  }
+};
+
+export const activateAccount = async (
+  parent: object,
+  args: object,
+  ctx: MyContext
+) => {
+  const userUuid = ctx.req.user?.sub || "";
+
+  await findUser(ctx, userUuid);
+
+  try {
+    await ctx.prisma.user.update({
+      where: {
+        uuid: userUuid,
+      },
+      data: {
+        active: true,
+      },
+    });
+
+    // TODO update status on properties too
+
+    return true;
+  } catch (e) {
+    throw new ApolloError("Error on delete Account");
+  }
+};
+

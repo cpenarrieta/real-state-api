@@ -4,6 +4,8 @@ import {
   me,
   saveUser,
   completeOnboarding,
+  deleteAccount,
+  activateAccount,
 } from "../users";
 import {
   myProperties,
@@ -60,5 +62,7 @@ export const resolvers = {
     deleteProperty,
     markAsSold,
     completeOnboarding,
+    deleteAccount,
+    activateAccount,
   },
 };
