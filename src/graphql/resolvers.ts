@@ -28,7 +28,7 @@ import {
   deleteImage,
   updateImagesOrder,
 } from "../images";
-import { propertyLeads, updateLead, leadAnalytics } from "../lead";
+import { propertyLeads, updateLead, leadAnalytics, leads } from "../lead";
 import { propertyAnalytics } from "../analytics";
 import { propertyOrders, orders } from "../orders";
 
@@ -46,6 +46,7 @@ export const resolvers = {
     otherProperties,
     propertyOrders,
     orders,
+    leads,
   },
   Mutation: {
     saveProperty: saveProperty,

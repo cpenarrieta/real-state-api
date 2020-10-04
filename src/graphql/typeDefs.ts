@@ -112,18 +112,19 @@ export const typeDefs = gql`
     name: String
     phone: String
     email: String
-    address1: String
-    address2: String
-    city: String
-    province: String
-    zipCode: String
-    country: String
     visitorId: String
     leadStatus: LEAD_STATUS
     createdAt: Date
     updatedAt: Date
     order: Int
     notes: String
+    uuid: String
+    image: String
+    title: String
+    city: String
+    province: String
+    zipCode: String
+    address1: String
   }
 
   input ImagesInput {
@@ -284,6 +285,7 @@ export const typeDefs = gql`
     attachments(uuid: String!): [Attachment]
     propertyImages(uuid: String!): [Image]
     propertyLeads(uuid: String!): [Lead]
+    leads: [Lead]
     otherProperties(uuid: String!): [Property]
     me: User
     leadAnalytics(id: Int!, uuid: String!): LeadAnalytic

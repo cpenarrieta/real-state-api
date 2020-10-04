@@ -3,6 +3,56 @@ import { ApolloError, UserInputError } from "apollo-server-express";
 import { findUser } from "../users";
 import { findProperty } from "../properties";
 
+export const leads = async (parent: object, args: object, ctx: MyContext) => {
+  const userUuid = ctx.req.user?.sub || "";
+
+  const user = await findUser(ctx, userUuid);
+
+  try {
+    const leads = await ctx.prisma.lead.findMany({
+      where: {
+        property: {
+          userId: user.id,
+          publishedStatus: "PUBLISHED",
+          status: "ACTIVE"
+        },
+      },
+      include: {
+        property: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    if (leads && leads.length > 1) {
+      return leads.map((l) => {
+        return {
+          id: l.id,
+          name: l.name,
+          email: l.email,
+          phone: l.phone,
+          leadStatus: l.leadStatus,
+          visitorId: l.visitorId,
+          createdAt: l.createdAt,
+          notes: l.notes,
+          uuid: l.property?.uuid,
+          image: l.property?.mainPictureLowRes,
+          title: l.property?.title,
+          city: l.property?.city,
+          province: l.property?.province,
+          zipCode: l.property?.zipCode,
+          address1: l.property?.address1,
+        };
+      });
+    }
+
+    return leads;
+  } catch (e) {
+    throw new ApolloError("Error getting leads");
+  }
+};
+
 export const propertyLeads = async (
   parent: object,
   args: { uuid: string },
@@ -44,7 +94,7 @@ export const propertyLeads = async (
 
     return leads;
   } catch (e) {
-    throw new ApolloError("Error getting leads");
+    throw new ApolloError("Error getting property leads");
   }
 };
 
