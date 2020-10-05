@@ -286,6 +286,20 @@ export const typeDefs = gql`
     properties: [Property]
   }
 
+  type RawAnalytic {
+    day: Date
+    count: Int
+  }
+
+  type UserAnalytic {
+    visits: LeadAnalytic
+    leads: LeadAnalytic
+    users: LeadAnalytic
+    visitsRaw: [RawAnalytic]
+    usersRaw: [RawAnalytic]
+    leadsRaw: [RawAnalytic]
+  }
+
   type Query {
     users: [User]
     properties: [Property]
@@ -301,6 +315,7 @@ export const typeDefs = gql`
     propertyOrders(uuid: String!): [Order]
     orders: [Order]
     dashboard: Dashboard
+    analytics: UserAnalytic
   }
 
   type Mutation {

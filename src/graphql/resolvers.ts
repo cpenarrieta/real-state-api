@@ -30,7 +30,7 @@ import {
   updateImagesOrder,
 } from "../images";
 import { propertyLeads, updateLead, leadAnalytics, leads } from "../lead";
-import { propertyAnalytics } from "../analytics";
+import { propertyAnalytics, analytics } from "../analytics";
 import { propertyOrders, orders } from "../orders";
 
 export const resolvers = {
@@ -49,6 +49,7 @@ export const resolvers = {
     orders,
     leads,
     dashboard,
+    analytics,
   },
   Mutation: {
     saveProperty: saveProperty,

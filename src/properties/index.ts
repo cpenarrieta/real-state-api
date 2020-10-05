@@ -72,15 +72,12 @@ export const dashboard = async (
   const uuid = ctx.req.user?.sub;
   const user = await findUser(ctx, uuid || "");
 
-  // TODO: is it faster to first get the User and then search by user instead of uuid?
-  const properties = ctx.prisma.property.findMany({
+  const properties = await ctx.prisma.property.findMany({
     where: {
       status: {
         in: [property_status.ACTIVE, property_status.SOLD],
       },
-      user: {
-        uuid,
-      },
+      userId: user.id,
     },
     select: {
       uuid: true,
@@ -121,6 +118,16 @@ export const dashboard = async (
     },
   });
 
+  const oneActiveProperty = properties?.some(
+    (p) => p.publishedStatus === "PUBLISHED"
+  );
+
+  if (!oneActiveProperty) {
+    return {
+      properties,
+    };
+  }
+
   const resultAnalytics = await ctx.prisma.$queryRaw<LeadAnalytic[]>`
     WITH analytics_users as (
       SELECT  v."visitorId", date_trunc('day', v."createdAt") as day, count(*)
@@ -156,13 +163,15 @@ export const dashboard = async (
       SUM(CASE WHEN v.day = current_date - interval '1 days' THEN 1 ELSE 0 END) as "yesterday",
       SUM(CASE WHEN v.day > current_date - interval '7 days' THEN 1 ELSE 0 END) as "last7Days"
     FROM analytics_users as v
-    `;
+  `;
 
   let visits: LeadAnalytic | null | undefined = null;
   let leads: LeadAnalytic | null | undefined = null;
   let users: LeadAnalytic | null | undefined = null;
   if (resultAnalytics && resultAnalytics.length >= 1) {
-    visits = resultAnalytics[0];
+    if (resultAnalytics[0].last7Days) {
+      visits = resultAnalytics[0];
+    }
     if (resultAnalytics.length >= 2) {
       leads = resultAnalytics[1] || null;
     }

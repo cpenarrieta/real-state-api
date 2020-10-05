@@ -35,7 +35,7 @@ export interface PropertyArgs {
   country?: string;
   community?: string;
   bathrooms?: number;
-  bedrooms?: number;
+  bedrooms?: number
   builtYear?: number;
   lotSize?: number;
   grossTaxesLastYear?: number;
@@ -97,6 +97,11 @@ export interface LeadAnalytic {
   last30Days?: number;
   last180Days?: number;
   totalViews?: number;
+}
+
+export interface RawAnalytic {
+  day?: Date;
+  count?: number;
 }
 
 export default prisma;
