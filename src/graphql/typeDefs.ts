@@ -94,6 +94,9 @@ export const typeDefs = gql`
     visits: LeadAnalytic
     leads: LeadAnalytic
     users: LeadAnalytic
+    visitsRaw: [RawAnalytic]
+    usersRaw: [RawAnalytic]
+    leadsRaw: [RawAnalytic]
   }
 
   type Image {

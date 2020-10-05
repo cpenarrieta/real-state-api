@@ -72,11 +72,46 @@ export const propertyAnalytics = async (
       FROM analytics_users as v;
     `;
 
+    const visitsRaw = await ctx.prisma.$queryRaw<RawAnalytic[]>`
+      SELECT date_trunc('day', v."createdAt") as day, count(*)
+      FROM public.visitor as v
+      Where  v."createdAt" > current_date - interval '180 days' and "propertyId" = ${property.id}
+      Group by day
+      ORDER BY day asc
+    `;
+
+    const leadsRaw = await ctx.prisma.$queryRaw<RawAnalytic[]>`
+      SELECT date_trunc('day', l."createdAt") as day, count(*)
+      FROM public.lead as l
+      Where  l."createdAt" > current_date - interval '180 days' and "propertyId" = ${property.id}
+      Group by day
+      ORDER BY day asc
+    `;
+
+    const usersRaw = await ctx.prisma.$queryRaw<RawAnalytic[]>`
+      WITH analytics_users as (
+        SELECT  v."visitorId", date_trunc('day', v."createdAt") as day
+        FROM public.visitor as v
+        Where  v."createdAt" > current_date - interval '180 days' and "propertyId" = ${property.id}
+        Group by v."visitorId", day
+        ORDER BY day desc
+      )
+    
+      SELECT day, count(*)
+      FROM analytics_users as l
+      Where  l.day > current_date - interval '7 days'
+      Group by day
+      ORDER BY day asc
+    `;
+
     let resObj = {
       id: property.id,
       visits: result && result.length ? result[0] : null,
       leads: resultLeads && resultLeads.length ? resultLeads[0] : null,
       users: resultUsers && resultUsers.length ? resultUsers[0] : null,
+      visitsRaw: visitsRaw && visitsRaw.length ? visitsRaw : [],
+      leadsRaw: leadsRaw && leadsRaw.length ? leadsRaw : [],
+      usersRaw: usersRaw && usersRaw.length ? usersRaw : [],
     };
 
     return resObj;
