@@ -194,16 +194,11 @@ export const myProperties = async (
   ctx: MyContext
 ) => {
   const uuid = ctx.req.user?.sub;
+  const user = await findUser(ctx, uuid || "");
 
-  // TODO: is it faster to first get the User and then search by user instead of uuid?
   const properties = ctx.prisma.property.findMany({
     where: {
-      status: {
-        in: [property_status.ACTIVE, property_status.SOLD],
-      },
-      user: {
-        uuid,
-      },
+      userId: user.id,
     },
     select: {
       uuid: true,
