@@ -78,22 +78,8 @@ export const typeDefs = gql`
     active: Boolean
   }
 
-  type LeadAnalytic {
-    id: Int
-    today: Int
-    yesterday: Int
-    last7Days: Int
-    last15Days: Int
-    last30Days: Int
-    last180Days: Int
-    totalViews: Int
-  }
-
   type PropertyAnalytic {
     id: Int
-    visits: LeadAnalytic
-    leads: LeadAnalytic
-    users: LeadAnalytic
     visitsRaw: [RawAnalytic]
     usersRaw: [RawAnalytic]
     leadsRaw: [RawAnalytic]
@@ -283,9 +269,6 @@ export const typeDefs = gql`
 
   type Dashboard {
     newLeads: Int
-    visits: LeadAnalytic
-    leads: LeadAnalytic
-    users: LeadAnalytic
     properties: [Property]
   }
 
@@ -295,9 +278,6 @@ export const typeDefs = gql`
   }
 
   type UserAnalytic {
-    visits: LeadAnalytic
-    leads: LeadAnalytic
-    users: LeadAnalytic
     visitsRaw: [RawAnalytic]
     usersRaw: [RawAnalytic]
     leadsRaw: [RawAnalytic]
@@ -313,7 +293,7 @@ export const typeDefs = gql`
     leads: [Lead]
     otherProperties(uuid: String!): [Property]
     me: User
-    leadAnalytics(id: Int!, uuid: String!): LeadAnalytic
+    leadAnalytics(id: Int!, uuid: String!): [RawAnalytic]
     propertyAnalytics(uuid: String!): PropertyAnalytic
     propertyOrders(uuid: String!): [Order]
     orders: [Order]

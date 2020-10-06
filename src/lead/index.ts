@@ -1,4 +1,4 @@
-import { MyContext, LeadAnalytic } from "../context";
+import { MyContext, RawAnalytic } from "../context";
 import { ApolloError, UserInputError } from "apollo-server-express";
 import { findUser } from "../users";
 import { findProperty } from "../properties";
@@ -166,22 +166,16 @@ export const leadAnalytics = async (
   }
 
   try {
-    const result = await ctx.prisma.$queryRaw<[LeadAnalytic]>`
-      SELECT
-        ${id} as id,
-        SUM(CASE WHEN date_trunc('day', v."createdAt") = current_date THEN 1 ELSE 0 END) as "today",
-        SUM(CASE WHEN date_trunc('day', v."createdAt") = current_date - interval '1 days' THEN 1 ELSE 0 END) as "yesterday",
-        SUM(CASE WHEN date_trunc('day', v."createdAt") > current_date - interval '7 days' THEN 1 ELSE 0 END) as "last7Days",
-        SUM(CASE WHEN date_trunc('day', v."createdAt") > current_date - interval '15 days' THEN 1 ELSE 0 END) as "last15Days",
-        SUM(CASE WHEN date_trunc('day', v."createdAt") > current_date - interval '30 days' THEN 1 ELSE 0 END) as "last30Days",
-        SUM(CASE WHEN date_trunc('day', v."createdAt") > current_date - interval '180 days' THEN 1 ELSE 0 END) as "last180Days",
-        count(*) as "totalViews"
+    const result = await ctx.prisma.$queryRaw<RawAnalytic[]>`
+      SELECT date_trunc('day', v."createdAt") as day, count(*)
       FROM public.lead as l 
         inner join public.visitor as v on l."visitorId" = v."visitorId" and l."propertyId" = v."propertyId"
-      Where l.id = ${id} and v."createdAt" > current_date - interval '180 days';
+      Where l.id = ${id} and  v."createdAt" > current_date - interval '180 days'
+      Group by day
+      ORDER BY day asc
     `;
 
-    return result && result.length ? result[0] : [];
+    return result && result.length ? result : [];
   } catch (e) {
     throw new ApolloError("Error getting leadAnalytics");
   }
