@@ -1,4 +1,4 @@
-import { MyContext, PropertyArgs, LeadAnalytic } from "../context";
+import { MyContext, PropertyArgs } from "../context";
 import { ApolloError, UserInputError } from "apollo-server-express";
 import { property_status, published_status } from "@prisma/client";
 import { findUser } from "../users";
@@ -118,73 +118,8 @@ export const dashboard = async (
     },
   });
 
-  const oneActiveProperty = properties?.some(
-    (p) => p.publishedStatus === "PUBLISHED"
-  );
-
-  if (!oneActiveProperty) {
-    return {
-      properties,
-    };
-  }
-
-  const resultAnalytics = await ctx.prisma.$queryRaw<LeadAnalytic[]>`
-    WITH analytics_users as (
-      SELECT  v."visitorId", date_trunc('day', v."createdAt") as day, count(*)
-      FROM public.visitor as v
-      inner join public.property as p on p.id = v."propertyId" and p."userId" = ${user.id}
-      Where  v."createdAt" > current_date - interval '7 days'
-      Group by v."visitorId", day
-      ORDER BY day desc
-    )
-    
-    SELECT
-      SUM(CASE WHEN date_trunc('day', v."createdAt") = current_date THEN 1 ELSE 0 END) as "today",
-      SUM(CASE WHEN date_trunc('day', v."createdAt") = current_date - interval '1 days' THEN 1 ELSE 0 END) as "yesterday",
-      SUM(CASE WHEN date_trunc('day', v."createdAt") > current_date - interval '7 days' THEN 1 ELSE 0 END) as "last7Days"
-    FROM public.visitor as v
-      inner join public.property as p on p.id = v."propertyId" and p."userId" = ${user.id}
-    Where  v."createdAt" > current_date - interval '7 days'
-    
-    union
-    
-    SELECT
-      SUM(CASE WHEN date_trunc('day', l."createdAt") = current_date THEN 1 ELSE 0 END) as "today",
-      SUM(CASE WHEN date_trunc('day', l."createdAt") = current_date - interval '1 days' THEN 1 ELSE 0 END) as "yesterday",
-      SUM(CASE WHEN date_trunc('day', l."createdAt") > current_date - interval '7 days' THEN 1 ELSE 0 END) as "last7Days"
-    FROM public.lead as l
-      inner join public.property as p on p.id = l."propertyId" and p."userId" = ${user.id}
-    Where  l."createdAt" > current_date - interval '7 days'
-    
-    union 
-    
-    SELECT
-      SUM(CASE WHEN v.day = current_date THEN 1 ELSE 0 END) as "today",
-      SUM(CASE WHEN v.day = current_date - interval '1 days' THEN 1 ELSE 0 END) as "yesterday",
-      SUM(CASE WHEN v.day > current_date - interval '7 days' THEN 1 ELSE 0 END) as "last7Days"
-    FROM analytics_users as v
-  `;
-
-  let visits: LeadAnalytic | null | undefined = null;
-  let leads: LeadAnalytic | null | undefined = null;
-  let users: LeadAnalytic | null | undefined = null;
-  if (resultAnalytics && resultAnalytics.length >= 1) {
-    if (resultAnalytics[0].last7Days) {
-      visits = resultAnalytics[0];
-    }
-    if (resultAnalytics.length >= 2) {
-      leads = resultAnalytics[1] || null;
-    }
-    if (resultAnalytics.length >= 3) {
-      users = resultAnalytics[2] || null;
-    }
-  }
-
   return {
     properties,
-    visits,
-    leads,
-    users,
   };
 };
 
