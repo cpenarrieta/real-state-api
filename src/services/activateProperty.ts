@@ -9,7 +9,7 @@ const getDaysByProduct = (type: string) => {
   } else if (type === "month") {
     return 32;
   } else if (type === "lifetime") {
-    return 999999;
+    return 36500; // 100 years
   }
   // TODO something is wrong here
   return 32;

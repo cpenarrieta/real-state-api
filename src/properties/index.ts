@@ -54,6 +54,7 @@ export const findProperty = async (ctx: MyContext, uuid: string) => {
       listingId: true,
       lat: true,
       lon: true,
+      openHouseActive: true,
     },
   });
 
@@ -318,6 +319,7 @@ export const saveProperty = async (
         color,
         hidePrice,
         strata,
+        openHouseActive,
       } = args?.property;
 
       let data = {
@@ -346,6 +348,7 @@ export const saveProperty = async (
         color,
         hidePrice,
         strata,
+        openHouseActive,
       } as object;
 
       if (mainImageId) {

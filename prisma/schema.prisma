@@ -69,11 +69,13 @@ model property {
   listingId                           String?
   mainPictureLowRes                   String?
   mainImageId                         Int?
+  openHouseActive                     Boolean?          @default(false)
   images_imagesToproperty_mainImageId images?           @relation("imagesToproperty_mainImageId", fields: [mainImageId], references: [id])
   user                                user              @relation(fields: [userId], references: [id])
   attachments                         attachments[]
   images                              images[]          @relation("images_propertyIdToproperty")
   lead                                lead[]
+  openHouse_openHouseToproperty       openHouse[]
   order                               order[]
 }
 
@@ -168,6 +170,15 @@ model order {
   paid            Boolean?
   property        property  @relation(fields: [propertyId], references: [id])
   user            user      @relation(fields: [userId], references: [id])
+}
+
+model openHouse {
+  id         Int       @id @default(autoincrement())
+  propertyId Int       @default(autoincrement())
+  date       DateTime?
+  timeStart  DateTime?
+  timeEnd    DateTime?
+  property   property  @relation(fields: [propertyId], references: [id])
 }
 
 enum currency {

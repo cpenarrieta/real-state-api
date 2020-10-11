@@ -63,6 +63,7 @@ export interface PropertyArgs {
   color?: string;
   hidePrice?: boolean;
   strata?: boolean;
+  openHouseActive?: boolean;
 }
 
 export interface AuthUser {

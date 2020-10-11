@@ -166,6 +166,7 @@ export const typeDefs = gql`
     listingId: String
     lat: Float
     lon: Float
+    openHouseActive: Boolean
     attachments: [Attachment]
   }
 
@@ -207,6 +208,7 @@ export const typeDefs = gql`
     listingId: String
     lat: Float
     lon: Float
+    openHouseActive: Boolean
     attachments: [AttachmentInput]
   }
 
