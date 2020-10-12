@@ -32,6 +32,7 @@ import {
 import { propertyLeads, updateLead, leadAnalytics, leads } from "../lead";
 import { propertyAnalytics, analytics } from "../analytics";
 import { propertyOrders, orders } from "../orders";
+import { propertyOpenHouse } from '../openHouse'
 
 export const resolvers = {
   Query: {
@@ -50,6 +51,7 @@ export const resolvers = {
     leads,
     dashboard,
     analytics,
+    propertyOpenHouse,
   },
   Mutation: {
     saveProperty: saveProperty,

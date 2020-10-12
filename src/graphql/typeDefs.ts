@@ -279,6 +279,13 @@ export const typeDefs = gql`
     count: Int
   }
 
+  type OpenHouse {
+    id: Int
+    date: Date
+    timeStart: Date
+    timeEnd: Date
+  }
+
   type UserAnalytic {
     visitsRaw: [RawAnalytic]
     usersRaw: [RawAnalytic]
@@ -301,6 +308,7 @@ export const typeDefs = gql`
     orders: [Order]
     dashboard: Dashboard
     analytics: UserAnalytic
+    propertyOpenHouse(uuid: String!): [OpenHouse]
   }
 
   type Mutation {
