@@ -286,6 +286,13 @@ export const typeDefs = gql`
     timeEnd: Date
   }
 
+  input OpenHouseInput {
+    id: Int
+    date: String
+    start: String
+    end: String
+  }
+
   type UserAnalytic {
     visitsRaw: [RawAnalytic]
     usersRaw: [RawAnalytic]
@@ -322,11 +329,17 @@ export const typeDefs = gql`
     deleteImage(id: Int!, uuid: String!): Boolean
     savePropertyImages(images: [ImagesInput]!, uuid: String!): Boolean
     updateImagesOrder(images: [ImagesInput]!, uuid: String!): Boolean
-    updateLead(id: Int!, uuid: String!, leadStatus: LEAD_STATUS!, notes: String): Boolean
+    updateLead(
+      id: Int!
+      uuid: String!
+      leadStatus: LEAD_STATUS!
+      notes: String
+    ): Boolean
     deleteProperty(uuid: String!): Boolean
     markAsSold(uuid: String!, undo: Boolean): Boolean
     completeOnboarding: Boolean
     deleteAccount: Boolean
     activateAccount: Boolean
+    saveOpenHouse(openHouse: [OpenHouseInput]!, uuid: String!): Boolean
   }
 `;

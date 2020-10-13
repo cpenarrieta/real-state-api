@@ -105,4 +105,11 @@ export interface RawAnalytic {
   count?: number;
 }
 
+export interface OpenHouse {
+  id: number;
+  date?: string;
+  start?: string;
+  end?: string;
+}
+
 export default prisma;

@@ -9,6 +9,17 @@ export const saveAttachment = async (
   ctx: MyContext
 ) => {
   const { url, title, uuid } = args;
+  const userUuid = ctx.req.user?.sub || "";
+  const user = await findUser(ctx, userUuid);
+  const property = await findProperty(ctx, uuid);
+
+  if (!property) {
+    throw new UserInputError("Invalid Property");
+  }
+
+  if (property?.userId !== user.id) {
+    throw new ApolloError("Property does not belongs to User");
+  }
 
   // TODO: CHECK max allowed attachments count
   try {
