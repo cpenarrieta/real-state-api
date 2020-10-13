@@ -85,7 +85,6 @@ export const saveOpenHouse = async (
 
     return true;
   } catch (e) {
-    console.log(e);
     throw new ApolloError("Error saving open house");
   }
 };
