@@ -326,6 +326,7 @@ export const typeDefs = gql`
     signS3(filename: String!, filetype: String!): S3Payload!
     saveAttachment(url: String!, title: String!, uuid: String!): Boolean
     deleteAttachment(id: Int!): Boolean
+    deleteOpenHouse(id: Int!): Boolean
     deleteImage(id: Int!, uuid: String!): Boolean
     savePropertyImages(images: [ImagesInput]!, uuid: String!): Boolean
     updateImagesOrder(images: [ImagesInput]!, uuid: String!): Boolean

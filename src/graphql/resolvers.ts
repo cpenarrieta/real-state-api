@@ -32,7 +32,11 @@ import {
 import { propertyLeads, updateLead, leadAnalytics, leads } from "../lead";
 import { propertyAnalytics, analytics } from "../analytics";
 import { propertyOrders, orders } from "../orders";
-import { propertyOpenHouse, saveOpenHouse } from "../openHouse";
+import {
+  propertyOpenHouse,
+  saveOpenHouse,
+  deleteOpenHouse,
+} from "../openHouse";
 
 export const resolvers = {
   Query: {
@@ -71,5 +75,6 @@ export const resolvers = {
     deleteAccount,
     activateAccount,
     saveOpenHouse,
+    deleteOpenHouse,
   },
 };

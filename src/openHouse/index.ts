@@ -1,6 +1,6 @@
 import { MyContext, OpenHouse } from "../context";
 import { ApolloError, UserInputError } from "apollo-server-express";
-import { findUser } from "../users";
+import { findUser, findUserWithProperties } from "../users";
 import { findProperty } from "../properties";
 
 export const propertyOpenHouse = async (
@@ -86,5 +86,44 @@ export const saveOpenHouse = async (
     return true;
   } catch (e) {
     throw new ApolloError("Error saving open house");
+  }
+};
+
+export const deleteOpenHouse = async (
+  parent: object,
+  args: { id: number },
+  ctx: MyContext
+) => {
+  const userUuid = ctx.req.user?.sub || "";
+  const { id } = args;
+
+  const user = await findUserWithProperties(ctx, userUuid);
+
+  try {
+    const openHouse = await ctx.prisma.openHouse.findOne({
+      where: {
+        id,
+      },
+      select: {
+        propertyId: true,
+      },
+    });
+
+    const property = user.property.find((p) => {
+      return p.id === openHouse?.propertyId;
+    });
+
+    if (!property) {
+      throw new ApolloError("Property does not belongs to User");
+    }
+
+    await ctx.prisma.openHouse.delete({
+      where: {
+        id,
+      },
+    });
+    return true;
+  } catch (e) {
+    throw new ApolloError("Error deleting openHouse");
   }
 };
