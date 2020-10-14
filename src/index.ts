@@ -11,12 +11,7 @@ import jwks from "jwks-rsa";
 import bodyParser from "body-parser";
 import { activateProperty } from "./services/activateProperty";
 import { stripe } from "../src/services/stripe";
-import {
-  PRICE_ID_LIFETIME_US,
-  PRICE_ID_YEAR_US,
-  PRICE_ID_LIFETIME_CA,
-  PRICE_ID_YEAR_CA,
-} from "./priceUtil";
+import { PRICE_ID_LIFETIME_US, PRICE_ID_LIFETIME_CA } from "./priceUtil";
 
 const requireAuth = jwt({
   secret: jwks.expressJwtSecret({
@@ -41,14 +36,12 @@ const requireAuth = jwt({
 
   app.get("/config/:country", async (req: MyRequest, res) => {
     const country = req.params.country;
-    let lifetime, oneYear;
+    let lifetime;
 
     if (country === "US") {
       lifetime = await stripe.prices.retrieve(PRICE_ID_LIFETIME_US);
-      oneYear = await stripe.prices.retrieve(PRICE_ID_YEAR_US);
     } else if (country === "CA") {
       lifetime = await stripe.prices.retrieve(PRICE_ID_LIFETIME_CA);
-      oneYear = await stripe.prices.retrieve(PRICE_ID_YEAR_CA);
     } else {
       res.send({ error: true });
     }
@@ -58,11 +51,6 @@ const requireAuth = jwt({
         id: lifetime.id,
         currency: lifetime.currency,
         amount: lifetime.unit_amount / 100,
-      },
-      oneYear: {
-        id: oneYear.id,
-        currency: oneYear.currency,
-        amount: oneYear.unit_amount / 100,
       },
     });
   });
