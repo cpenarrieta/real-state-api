@@ -322,7 +322,6 @@ export const typeDefs = gql`
     saveProperty(property: PropertyInput): Property
     saveUser(user: UserInput): User
     verifyUser: String
-    publishProperty(propertyUuid: String): Boolean
     signS3(filename: String!, filetype: String!): S3Payload!
     saveAttachment(url: String!, title: String!, uuid: String!): Boolean
     deleteAttachment(id: Int!): Boolean
