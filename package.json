@@ -1,10 +1,13 @@
 {
   "name": "real-state-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "API for RealtorApp",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec ts-node src/index.ts"
+    "build": "tsc",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "prisma-generate": "prisma generate --schema=prisma/schema.prisma",
+    "start": "ts-node src/index.ts"
   },
   "keywords": [],
   "author": "Cristian Penarrieta",
@@ -35,5 +38,9 @@
     "hashids": "^2.2.1",
     "jwks-rsa": "^1.10.1",
     "stripe": "^8.109.0"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/cpenarrieta/real-state-api"
   }
 }

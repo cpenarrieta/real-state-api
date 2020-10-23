@@ -5,13 +5,14 @@ import { ApolloServer } from "apollo-server-express";
 import { typeDefs } from "./graphql/typeDefs";
 import { resolvers } from "./graphql/resolvers";
 import cors from "cors";
-import { createContext, MyRequest } from "./context";
+import prisma, { createContext, MyRequest } from "./context";
 import jwt from "express-jwt";
 import jwks from "jwks-rsa";
 import bodyParser from "body-parser";
 import { activateProperty } from "./services/activateProperty";
-import { stripe } from "../src/services/stripe";
 import { PRICE_ID_LIFETIME_US, PRICE_ID_LIFETIME_CA } from "./priceUtil";
+
+export const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const requireAuth = jwt({
   secret: jwks.expressJwtSecret({
@@ -27,11 +28,197 @@ const requireAuth = jwt({
 
 (async () => {
   const app = express();
+  app.set("trust proxy", true);
+
   app.use(
     cors({
-      origin: [process.env.APP_URL || "", process.env.API_URL || ""],
+      origin: [process.env.APP_URL || "", process.env.STATIC_URL || ""],
       credentials: true,
     })
+  );
+
+  app.get("/home_static/properties", async (req: MyRequest, res) => {
+    try {
+      const properties = await prisma.property.findMany({
+        select: {
+          uuid: true,
+          username: true,
+        },
+        where: {
+          status: {
+            in: ["ACTIVE", "SOLD"],
+          },
+          publishedStatus: "PUBLISHED",
+        },
+      });
+
+      res.send(properties);
+    } catch (e) {
+      res.status(500).send("Error getting all Properties");
+    }
+  });
+
+  app.get("/home_static/users", async (req: MyRequest, res) => {
+    try {
+      const users = await prisma.user.findMany({
+        select: {
+          username: true,
+        },
+        where: {
+          active: true,
+        },
+      });
+
+      res.send(users);
+    } catch (e) {
+      res.status(500).send("Error getting all users");
+    }
+  });
+
+  app.get("/home_static/user/:username", async (req: MyRequest, res) => {
+    try {
+      const username = req.params.username;
+      const users = await prisma.user.findMany({
+        where: {
+          username: username,
+        },
+      });
+
+      if (users && users.length > 0) {
+        res.send(users);
+      } else {
+        res.status(400).send({ message: "user not found" });
+      }
+    } catch (e) {
+      res.status(500).send("Error getting user");
+    }
+  });
+
+  app.get(
+    "/home_static/property/:username/:propertyId",
+    async (req: MyRequest, res) => {
+      const propertyId = req.params.propertyId;
+      const username = req.params.username;
+
+      let property = null;
+      let otherProperties = [];
+      let attachments = [];
+      let images = [];
+      let openHouse = [];
+
+      try {
+        const data = await prisma.$queryRaw(`
+          SELECT p.*,
+            u.email as "userEmail", 
+            u."firstName" as "userFirstName", 
+            u."lastName" as "userLastName", 
+            u.phone as "userPhone", 
+            u.picture as "userPicture", 
+            u."pictureLowRes" as "userPictureLowRes",
+            u.address1 as "userAddress1", 
+            u.address2 as "userAddress2", 
+            u.city as "userCity", 
+            u.province as "userProvince", 
+            u."zipCode" as "userZipcode", 
+            u.country as "userCountry",
+            u."smallBio" as "userSmallBio"
+          FROM public.property as p
+            INNER JOIN public.user as u on u.id = p."userId"
+          WHERE p.status in ('ACTIVE', 'SOLD') and p."publishedStatus" = 'PUBLISHED' and p.uuid = '${propertyId}'
+        `);
+
+        if (!data || data.length <= 0) {
+          return res.status(400).send({ message: "property not found" });
+        }
+        property = data[0];
+
+        // OTHER PROPERTIES FROM USER
+        try {
+          const dataOther = await prisma.$queryRaw(`
+            Select title, uuid, bedrooms, bathrooms, price, "mainPictureLowRes", currency, status, city, "hidePrice"
+            from public.property
+            where username = '${username}' and 
+              uuid <> '${propertyId}' and 
+              "publishedStatus" = 'PUBLISHED' and
+              status = 'ACTIVE' and 
+              "mainPictureLowRes" IS NOT NULL
+            ORDER BY "updatedAt" desc
+            limit 6
+          `);
+
+          if (!dataOther || dataOther.length <= 0) {
+            otherProperties = [];
+          } else {
+            otherProperties = dataOther;
+          }
+        } catch (err) {
+          otherProperties = [];
+        }
+
+        // ATTACHMENTS
+        try {
+          const dataAttachments = await prisma.$queryRaw(`
+            Select *
+            from public.attachments
+            where "propertyId" = ${property.id} and active=true
+            ORDER BY "updatedAt" desc
+          `);
+
+          if (!dataAttachments || dataAttachments.length <= 0) {
+            attachments = [];
+          } else {
+            attachments = dataAttachments;
+          }
+        } catch (err) {
+          attachments = [];
+        }
+
+        // IMAGES
+        try {
+          const dataImages = await prisma.$queryRaw(`
+            Select id, url, "urlLowRes"
+            from public.images
+            where "propertyId" = ${property.id} and active=true`);
+
+          if (!dataImages || dataImages.length <= 0) {
+            images = [];
+          } else {
+            images = dataImages;
+          }
+        } catch (err) {
+          images = [];
+        }
+
+        // OPEN HOUSE
+        try {
+          const dataOpenHouse = await prisma.$queryRaw(`
+            Select *
+            from public."openHouse"
+            where "propertyId" = ${property.id}
+            ORDER BY date asc
+          `);
+
+          if (!dataOpenHouse || dataOpenHouse.length <= 0) {
+            openHouse = [];
+          } else {
+            openHouse = dataOpenHouse;
+          }
+        } catch (err) {
+          openHouse = [];
+        }
+
+        return res.send({
+          property,
+          otherProperties,
+          attachments,
+          images,
+          openHouse,
+        });
+      } catch (e) {
+        console.log(e);
+        return res.status(500).send("Error getting property");
+      }
+    }
   );
 
   app.get("/config/:country", async (req: MyRequest, res) => {
@@ -149,7 +336,7 @@ const requireAuth = jwt({
 
   apolloServer.applyMiddleware({ app, cors: false });
 
-  app.listen(4000, () => {
-    console.log("express server started 🚀 🚀 🚀 - Port ", 4000);
+  app.listen(process.env.PORT, () => {
+    console.log("API server started 🚀 🚀 🚀 - Port ", process.env.PORT);
   });
 })();
