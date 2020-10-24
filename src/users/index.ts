@@ -70,16 +70,25 @@ export const verifyUser = async (
     },
   });
 
-  if (!user?.active) return "inactive";
-  if (user) return "existing";
+  let returnStr = "";
 
-  await ctx.prisma.user.create({
-    data: {
-      uuid,
-    },
-  });
+  if (user) {
+    returnStr = "existing";
 
-  return "new";
+    if (!user.active) {
+      returnStr = "inactive";
+    }
+  } else {
+    await ctx.prisma.user.create({
+      data: {
+        uuid,
+      },
+    });
+
+    returnStr = "new";
+  }
+
+  return returnStr;
 };
 
 export const me = async (parent: object, args: object, ctx: MyContext) => {
@@ -245,4 +254,3 @@ export const activateAccount = async (
     throw new ApolloError("Error on delete Account");
   }
 };
-

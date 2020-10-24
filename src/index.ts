@@ -58,7 +58,6 @@ const requireAuth = jwt({
 
       res.send(properties);
     } catch (e) {
-      console.log(e);
       res.status(500).send("Error getting all Properties");
     }
   });
@@ -76,7 +75,6 @@ const requireAuth = jwt({
 
       res.send(users);
     } catch (e) {
-      console.log(e);
       res.status(500).send("Error getting all users");
     }
   });
@@ -91,7 +89,7 @@ const requireAuth = jwt({
       });
 
       if (users && users.length > 0) {
-        res.send(users);
+        res.send(users[0]);
       } else {
         res.status(400).send({ message: "user not found" });
       }
@@ -221,7 +219,6 @@ const requireAuth = jwt({
           openHouse,
         });
       } catch (e) {
-        console.log(e);
         return res.status(500).send("Error getting property");
       }
     }
