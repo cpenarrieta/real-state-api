@@ -37,6 +37,10 @@ const requireAuth = jwt({
     })
   );
 
+  app.get("/testping", async (req: MyRequest, res) => {
+    res.send("pong2");
+  });
+
   app.get("/home_static/properties", async (req: MyRequest, res) => {
     try {
       const properties = await prisma.property.findMany({
@@ -54,6 +58,7 @@ const requireAuth = jwt({
 
       res.send(properties);
     } catch (e) {
+      console.log(e);
       res.status(500).send("Error getting all Properties");
     }
   });
@@ -71,6 +76,7 @@ const requireAuth = jwt({
 
       res.send(users);
     } catch (e) {
+      console.log(e);
       res.status(500).send("Error getting all users");
     }
   });
