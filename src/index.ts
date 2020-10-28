@@ -38,7 +38,7 @@ const requireAuth = jwt({
   );
 
   app.get("/testping", async (req: MyRequest, res) => {
-    res.send("pong2");
+    res.send("pong3");
   });
 
   app.get("/home_static/properties", async (req: MyRequest, res) => {
