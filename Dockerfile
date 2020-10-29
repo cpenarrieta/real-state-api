@@ -18,7 +18,7 @@ COPY . .
 COPY .env.production .env
 COPY prisma/.env.production prisma/.env
 
-RUN npm run prisma-generate
+# RUN npm run prisma-generate
 
 RUN npm run build
 
