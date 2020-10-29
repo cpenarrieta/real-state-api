@@ -5,6 +5,8 @@ tmp/
 temp/
 .DS_Store
 .env
+.env.production
 prisma/.env
+prisma/.env.production
 serviceAccountKey.json
 dist/
