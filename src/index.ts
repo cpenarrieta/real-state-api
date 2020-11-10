@@ -86,6 +86,45 @@ const requireAuth = jwt({
         where: {
           username: username,
         },
+        include: {
+          property: {
+            select: {
+              uuid: true,
+              mainPicture: true,
+              mainPictureLowRes: true,
+              title: true,
+              address1: true,
+              address2: true,
+              zipCode: true,
+              city: true,
+              community: true,
+              country: true,
+              bathrooms: true,
+              province: true,
+              bedrooms: true,
+              builtYear: true,
+              currency: true,
+              price: true,
+              propertyType: true,
+              status: true,
+              publishedStatus: true,
+              createdAt: true,
+              soldAt: true,
+              hidePrice: true,
+            },
+            where: {
+              status: {
+                in: ["ACTIVE", "SOLD"],
+              },
+              publishedStatus: {
+                equals: "PUBLISHED",
+              },
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+          },
+        },
       });
 
       if (users && users.length > 0) {
