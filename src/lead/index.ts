@@ -11,10 +11,8 @@ export const leads = async (parent: object, args: object, ctx: MyContext) => {
   try {
     const leads = await ctx.prisma.lead.findMany({
       where: {
-        property: {
-          userId: user.id,
-          publishedStatus: "PUBLISHED",
-          status: "ACTIVE"
+        userId: {
+          equals: user.id,
         },
       },
       include: {
@@ -32,6 +30,8 @@ export const leads = async (parent: object, args: object, ctx: MyContext) => {
           name: l.name,
           email: l.email,
           phone: l.phone,
+          type: l.type,
+          userId: l.userId,
           leadStatus: l.leadStatus,
           visitorId: l.visitorId,
           createdAt: l.createdAt,
@@ -105,6 +105,7 @@ export const updateLead = async (
     uuid: string;
     leadStatus: "STARRED" | "ARCHIVED" | "PENDING" | "CONTACTED" | "BUYER";
     notes: string;
+    type: "PROPERTY" | "USER";
   },
   ctx: MyContext
 ) => {
@@ -113,16 +114,20 @@ export const updateLead = async (
   const id = args?.id;
   const leadStatus = args?.leadStatus;
   const notes = args?.notes;
+  const type = args?.type;
 
   const user = await findUser(ctx, userUuid);
-  const property = await findProperty(ctx, propertyUuid);
 
-  if (!property) {
-    throw new UserInputError("Invalid Property");
-  }
+  if (type === "PROPERTY") {
+    const property = await findProperty(ctx, propertyUuid);
 
-  if (property?.userId !== user.id) {
-    throw new ApolloError("Property does not belongs to User");
+    if (!property) {
+      throw new UserInputError("Invalid Property");
+    }
+
+    if (property?.userId !== user.id) {
+      throw new ApolloError("Property does not belongs to User");
+    }
   }
 
   try {
@@ -147,36 +152,56 @@ export const leadAnalytics = async (
   args: {
     id: number;
     uuid: string;
+    type: "PROPERTY" | "USER";
   },
   ctx: MyContext
 ) => {
   const userUuid = ctx.req.user?.sub || "";
   const propertyUuid = args?.uuid;
   const id = args?.id;
+  const type = args?.type;
 
   const user = await findUser(ctx, userUuid);
-  const property = await findProperty(ctx, propertyUuid);
 
-  if (!property) {
-    throw new UserInputError("Invalid Property");
-  }
+  if (type === "PROPERTY") {
+    const property = await findProperty(ctx, propertyUuid);
 
-  if (property?.userId !== user.id) {
-    throw new ApolloError("Property does not belongs to User");
-  }
+    if (!property) {
+      throw new UserInputError("Invalid Property");
+    }
 
-  try {
-    const result = await ctx.prisma.$queryRaw<RawAnalytic[]>`
-      SELECT date_trunc('day', v."createdAt") as day, count(*)
-      FROM public.lead as l 
-        inner join public.visitor as v on l."visitorId" = v."visitorId" and l."propertyId" = v."propertyId"
-      Where l.id = ${id} and  v."createdAt" > current_date - interval '180 days'
-      Group by day
-      ORDER BY day asc
-    `;
+    if (property?.userId !== user.id) {
+      throw new ApolloError("Property does not belongs to User");
+    }
 
-    return result && result.length ? result : [];
-  } catch (e) {
-    throw new ApolloError("Error getting leadAnalytics");
+    try {
+      const result = await ctx.prisma.$queryRaw<RawAnalytic[]>`
+        SELECT date_trunc('day', v."createdAt") as day, count(*)
+        FROM public.lead as l 
+          inner join public.visitor as v on l."visitorId" = v."visitorId" and l."propertyId" = v."propertyId"
+        Where l.id = ${id} and  v."createdAt" > current_date - interval '180 days'
+        Group by day
+        ORDER BY day asc
+      `;
+
+      return result && result.length ? result : [];
+    } catch (e) {
+      throw new ApolloError("Error getting leadAnalytics");
+    }
+  } else {
+    try {
+      const result = await ctx.prisma.$queryRaw<RawAnalytic[]>`
+        SELECT date_trunc('day', v."createdAt") as day, count(*)
+        FROM public.lead as l 
+          inner join public.visitor as v on l."visitorId" = v."visitorId" and l."userId" = v."userId"
+        Where l.id = ${id} and  v."createdAt" > current_date - interval '180 days'
+        Group by day
+        ORDER BY day asc
+      `;
+
+      return result && result.length ? result : [];
+    } catch (e) {
+      throw new ApolloError("Error getting leadAnalytics");
+    }
   }
 };

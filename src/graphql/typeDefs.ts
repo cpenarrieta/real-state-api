@@ -42,6 +42,11 @@ export const typeDefs = gql`
     STARRED
   }
 
+  enum VISITOR_TYPE {
+    PROPERTY
+    USER
+  }
+
   type User {
     uuid: ID
     email: String
@@ -102,6 +107,7 @@ export const typeDefs = gql`
     phone: String
     email: String
     visitorId: String
+    type: VISITOR_TYPE
     leadStatus: LEAD_STATUS
     createdAt: Date
     updatedAt: Date
@@ -114,6 +120,7 @@ export const typeDefs = gql`
     province: String
     zipCode: String
     address1: String
+    userId: Int
   }
 
   input ImagesInput {
@@ -309,7 +316,7 @@ export const typeDefs = gql`
     leads: [Lead]
     otherProperties(uuid: String!): [Property]
     me: User
-    leadAnalytics(id: Int!, uuid: String!): [RawAnalytic]
+    leadAnalytics(id: Int!, uuid: String, type: VISITOR_TYPE): [RawAnalytic]
     propertyAnalytics(uuid: String!): PropertyAnalytic
     propertyOrders(uuid: String!): [Order]
     orders: [Order]
@@ -331,9 +338,10 @@ export const typeDefs = gql`
     updateImagesOrder(images: [ImagesInput]!, uuid: String!): Boolean
     updateLead(
       id: Int!
-      uuid: String!
+      uuid: String
       leadStatus: LEAD_STATUS!
       notes: String
+      type: VISITOR_TYPE
     ): Boolean
     deleteProperty(uuid: String!): Boolean
     markAsSold(uuid: String!, undo: Boolean): Boolean

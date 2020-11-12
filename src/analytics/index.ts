@@ -81,8 +81,7 @@ export const analytics = async (
     const visitsRaw = await ctx.prisma.$queryRaw<RawAnalytic[]>`
       SELECT date_trunc('day', v."createdAt") as day, count(*)
       FROM public.visitor as v
-      inner join public.property as p on p.id = v."propertyId" and p."userId" = ${user.id}
-      Where  v."createdAt" > current_date - interval '180 days'
+      Where v."createdAt" > current_date - interval '180 days' and v."userId" = ${user.id}
       Group by day
       ORDER BY day asc
     `;
@@ -90,18 +89,16 @@ export const analytics = async (
     const leadsRaw = await ctx.prisma.$queryRaw<RawAnalytic[]>`
       SELECT date_trunc('day', l."createdAt") as day, count(*)
       FROM public.lead as l
-      inner join public.property as p on p.id = l."propertyId" and p."userId" = ${user.id}
-      Where  l."createdAt" > current_date - interval '180 days'
+      Where  l."createdAt" > current_date - interval '180 days' and l."userId" = ${user.id}
       Group by day
       ORDER BY day asc
     `;
 
     const usersRaw = await ctx.prisma.$queryRaw<RawAnalytic[]>`
       WITH analytics_users as (
-        SELECT  v."visitorId", date_trunc('day', v."createdAt") as day
+        SELECT v."visitorId", date_trunc('day', v."createdAt") as day
         FROM public.visitor as v
-        inner join public.property as p on p.id = v."propertyId" and p."userId" = ${user.id}
-        Where  v."createdAt" > current_date - interval '180 days'
+        Where v."createdAt" > current_date - interval '180 days' and v."userId" = ${user.id}
         Group by v."visitorId", day
         ORDER BY day desc
       )

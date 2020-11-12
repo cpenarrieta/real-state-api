@@ -18,19 +18,22 @@ model lead {
   province   String?
   zipCode    String?
   country    String?
-  propertyId Int          @default(autoincrement())
+  propertyId Int?
   leadStatus lead_status? @default(PENDING)
   visitorId  String?
   createdAt  DateTime?    @default(now())
   updatedAt  DateTime?    @default(now())
   notes      String?
-  property   property     @relation(fields: [propertyId], references: [id])
+  type       visit_type   @default(PROPERTY)
+  userId     Int?
+  property   property?    @relation(fields: [propertyId], references: [id])
+  user       user?        @relation(fields: [userId], references: [id])
 }
 
 model property {
   id                                  Int               @id @default(autoincrement())
   title                               String?
-  userId                              Int               @default(autoincrement())
+  userId                              Int
   createdAt                           DateTime          @default(now())
   updatedAt                           DateTime          @default(now())
   uuid                                String            @unique @default(dbgenerated())
@@ -77,6 +80,7 @@ model property {
   lead                                lead[]
   openHouse_openHouseToproperty       openHouse[]
   order                               order[]
+  visitor                             visitor[]
 }
 
 model user {
@@ -106,15 +110,21 @@ model user {
   instagramLink      String?
   facebookLink       String?
   active             Boolean?   @default(true)
+  lead               lead[]
   order              order[]
   property           property[]
+  visitor            visitor[]
 }
 
 model visitor {
-  id         Int       @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   visitorId  String?
-  propertyId Int       @default(autoincrement())
-  createdAt  DateTime? @default(now())
+  propertyId Int?
+  createdAt  DateTime?  @default(now())
+  type       visit_type @default(PROPERTY)
+  userId     Int?
+  property   property?  @relation(fields: [propertyId], references: [id])
+  user       user?      @relation(fields: [userId], references: [id])
 }
 
 model attachments {
@@ -123,7 +133,7 @@ model attachments {
   url        String?
   createdAt  DateTime? @default(now())
   updatedAt  DateTime? @default(now())
-  propertyId Int       @default(autoincrement())
+  propertyId Int
   active     Boolean?  @default(true)
   property   property  @relation(fields: [propertyId], references: [id])
 }
@@ -145,8 +155,8 @@ model images {
 
 model order {
   id              Int       @id @default(autoincrement())
-  userId          Int       @default(autoincrement())
-  propertyId      Int       @default(autoincrement())
+  userId          Int
+  propertyId      Int
   sessionId       String?
   chargeId        String?   @unique
   paymentIntentId String?
@@ -174,7 +184,7 @@ model order {
 
 model openHouse {
   id         Int       @id @default(autoincrement())
-  propertyId Int       @default(autoincrement())
+  propertyId Int
   date       DateTime?
   timeStart  DateTime?
   timeEnd    DateTime?
@@ -182,40 +192,45 @@ model openHouse {
 }
 
 enum currency {
-  CAD
   USD
+  CAD
 }
 
 enum lead_status {
-  ARCHIVED
-  BUYER
-  CONTACTED
   PENDING
   STARRED
+  CONTACTED
+  BUYER
+  ARCHIVED
 }
 
 enum property_status {
   ACTIVE
-  HOLD
   INACTIVE
   SOLD
+  HOLD
 }
 
 enum property_type {
-  CONDO
   HOUSE
+  TOWNHOUSE
+  CONDO
   LAND
   OTHER
-  TOWNHOUSE
 }
 
 enum published_status {
   DRAFT
-  INACTIVE
   PUBLISHED
+  INACTIVE
 }
 
 enum video_type {
-  VIMEO
   YOUTUBE
+  VIMEO
+}
+
+enum visit_type {
+  PROPERTY
+  USER
 }
