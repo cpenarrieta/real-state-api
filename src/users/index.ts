@@ -124,6 +124,10 @@ export const saveUser = async (
     username,
     smallBio,
     country,
+    twitterLink,
+    instagramLink,
+    facebookLink,
+    website,
   } = args?.user;
 
   let data = {
@@ -141,6 +145,10 @@ export const saveUser = async (
     pictureLowRes,
     smallBio,
     country,
+    twitterLink,
+    instagramLink,
+    facebookLink,
+    website,
     profileComplete: true,
   } as object;
 

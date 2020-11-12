@@ -110,6 +110,7 @@ model user {
   instagramLink      String?
   facebookLink       String?
   active             Boolean?   @default(true)
+  website            String?
   lead               lead[]
   order              order[]
   property           property[]

@@ -22,6 +22,7 @@ export interface UserArgs {
   twitterLink?: string;
   instagramLink?: string;
   facebookLink?: string;
+  website?: string;
 }
 
 export interface PropertyArgs {

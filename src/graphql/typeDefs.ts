@@ -70,6 +70,7 @@ export const typeDefs = gql`
     twitterLink: String
     instagramLink: String
     facebookLink: String
+    website: String
     profileComplete: Boolean
     onboardingComplete: Boolean
     duplicateUsername: Boolean
@@ -238,6 +239,7 @@ export const typeDefs = gql`
     twitterLink: String
     instagramLink: String
     facebookLink: String
+    website: String
   }
 
   input AttachmentInput {
