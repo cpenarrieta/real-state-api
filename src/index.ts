@@ -11,8 +11,11 @@ import jwks from "jwks-rsa";
 import bodyParser from "body-parser";
 import { activateProperty } from "./services/activateProperty";
 import { PRICE_ID_LIFETIME_US, PRICE_ID_LIFETIME_CA } from "./priceUtil";
+import { scheduleLeadsJob } from "./jobs/leads";
 
 export const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+scheduleLeadsJob();
 
 const requireAuth = jwt({
   secret: jwks.expressJwtSecret({
