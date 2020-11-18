@@ -25,8 +25,8 @@ async function asyncForEach(
 
 export const scheduleLeadsJob = () => {
   const job = new CronJob(
-    // "0 */30 7-23 * * *", // Every 30 minutes between 7am-11pm
-    "0 */1 * * * *",
+    "0 */30 7-23 * * *", // Every 30 minutes between 7am-11pm
+    // "0 */1 * * * *",
     async () => {
       try {
         // Get leads that didnt sent email(new column) and that are not contacted.
