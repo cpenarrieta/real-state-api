@@ -1,6 +1,6 @@
-export const PRICE_ID_LIFETIME_US: string = "price_1HUnynJTQgPl8Cr4f0eF9Tbv";
+export const PRICE_ID_LIFETIME_US: string = process.env.STRIPE_PRICE_USD || "";
 export const PRICE_ID_YEAR_US: string = "price_1HUneuJTQgPl8Cr4RpMANhId";
-export const PRICE_ID_LIFETIME_CA: string = "price_1HUnynJTQgPl8Cr49GidXV5a";
+export const PRICE_ID_LIFETIME_CA: string = process.env.STRIPE_PRICE_CAD || "";
 export const PRICE_ID_YEAR_CA: string = "price_1HUneuJTQgPl8Cr43Ll1vIZD";
 
 const PRICE_LIFETIME_US = {
