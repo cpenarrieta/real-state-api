@@ -1,6 +1,7 @@
 import cron from "cron";
 import prisma from "../context";
 import { makeANiceEmail, transport } from "../services/leadMail";
+import { format } from "date-fns";
 
 const CronJob = cron.CronJob;
 
@@ -102,7 +103,7 @@ export const scheduleLeadsJob = () => {
                   await transport.sendMail({
                     from: "hello@realtorapp.co",
                     to: element.email,
-                    subject: "🔎 Realtor App | New Leads",
+                    subject: `🔎 Realtor App | New Leads | ${format(new Date(), "MMMM do")}`,
                     html: makeANiceEmail(element.leads),
                   });
                 }
