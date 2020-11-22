@@ -307,36 +307,80 @@ const requireAuth = jwt({
       const { productType, propertyId, email } = req.body;
       const userUuid = req.user?.sub;
       const price = await stripe.prices.retrieve(productType);
+      const user = await prisma.user.findOne({
+        where: {
+          uuid: userUuid,
+        },
+        select: {
+          stripeId: true,
+        },
+      });
+
       const metadata = {
         propertyId,
         priceId: price.id,
         userUuid,
+        stripeId: user?.stripeId,
       };
 
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        mode: "payment",
-        locale: "en",
-        customer_email: email,
-        line_items: [
-          {
-            price: price.id,
-            quantity: 1,
-          },
-        ],
-        metadata,
-        success_url: `${domainURL}/payment-success?session_id={CHECKOUT_SESSION_ID}&propertyId=${propertyId}`,
-        cancel_url: req.headers.referer,
-        client_reference_id: propertyId,
-        payment_intent_data: {
-          receipt_email: email,
+      if (user?.stripeId) {
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ["card"],
+          mode: "payment",
+          locale: "en",
+          customer: user?.stripeId,
+          line_items: [
+            {
+              price: price.id,
+              quantity: 1,
+            },
+          ],
           metadata,
-        },
-      });
+          success_url: `${domainURL}/payment-success?session_id={CHECKOUT_SESSION_ID}&propertyId=${propertyId}`,
+          cancel_url: req.headers.referer,
+          client_reference_id: propertyId,
+          payment_intent_data: {
+            receipt_email: email,
+            metadata,
+          },
+          allow_promotion_codes: true,
+        });
 
-      res.send({
-        sessionId: session.id,
-      });
+        res.send({
+          sessionId: session.id,
+        });
+      } else {
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ["card"],
+          mode: "payment",
+          locale: "en",
+          customer_email: email,
+          line_items: [
+            {
+              price: price.id,
+              quantity: 1,
+            },
+          ],
+          metadata,
+          success_url: `${domainURL}/payment-success?session_id={CHECKOUT_SESSION_ID}&propertyId=${propertyId}`,
+          cancel_url: req.headers.referer,
+          client_reference_id: propertyId,
+          payment_intent_data: {
+            receipt_email: email,
+            metadata,
+          },
+          allow_promotion_codes: true,
+          // discounts: [
+          //   {
+          //     coupon: "REALTORAPPVIP",
+          //   },
+          // ],
+        });
+
+        res.send({
+          sessionId: session.id,
+        });
+      }
     }
   );
 

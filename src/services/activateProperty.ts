@@ -29,7 +29,12 @@ export const activateProperty = async (session: {
   currency: string;
   receipt_email: string;
   receipt_url: string;
-  metadata: { propertyId: string; priceId: string; userUuid: string };
+  metadata: {
+    propertyId: string;
+    priceId: string;
+    userUuid: string;
+    stripeId: string;
+  };
   billing_details: {
     email: string;
     name: string;
@@ -44,7 +49,7 @@ export const activateProperty = async (session: {
   customer: string;
   status: string;
 }) => {
-  const { propertyId, priceId, userUuid } = session?.metadata;
+  const { propertyId, priceId, userUuid, stripeId } = session?.metadata;
   const price = PRICE_MAP[priceId];
 
   const property = await prisma.property.findOne({
@@ -91,7 +96,7 @@ export const activateProperty = async (session: {
     },
   });
 
-  if (userUuid) {
+  if (userUuid && !stripeId) {
     await prisma.user.update({
       where: {
         uuid: userUuid,
