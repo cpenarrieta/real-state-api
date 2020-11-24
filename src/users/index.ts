@@ -153,7 +153,7 @@ export const saveUser = async (
   } as object;
 
   let duplicateUsername = false;
-  if (username && username !== user.username) {
+  if (username && username !== user.username && username.length >= 3) {
     const checkUsernames = await ctx.prisma.user.findMany({
       where: {
         username: username,

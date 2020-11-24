@@ -370,11 +370,6 @@ const requireAuth = jwt({
             metadata,
           },
           allow_promotion_codes: true,
-          // discounts: [
-          //   {
-          //     coupon: "REALTORAPPVIP",
-          //   },
-          // ],
         });
 
         res.send({
