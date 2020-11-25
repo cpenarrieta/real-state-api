@@ -148,7 +148,7 @@ export const savePropertyImages = async (
   try {
     const resImages = await Promise.all(promises);
 
-    if (!property.mainImageId && images && images.length > 0) {
+    if (!property.mainPicture && images && images.length > 0) {
       const firstImage = resImages[0];
 
       await ctx.prisma.property.update({
