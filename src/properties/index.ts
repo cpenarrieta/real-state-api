@@ -8,7 +8,7 @@ const Hashids = require("hashids/cjs");
 const hashids = new Hashids(process.env.HASH_SALT, 10);
 
 export const findProperty = async (ctx: MyContext, uuid: string) => {
-  const property = await ctx.prisma.property.findOne({
+  const property = await ctx.prisma.property.findUnique({
     where: {
       uuid,
     },

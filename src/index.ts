@@ -307,7 +307,7 @@ const requireAuth = jwt({
       const { productType, propertyId, email } = req.body;
       const userUuid = req.user?.sub;
       const price = await stripe.prices.retrieve(productType);
-      const user = await prisma.user.findOne({
+      const user = await prisma.user.findUnique({
         where: {
           uuid: userUuid,
         },

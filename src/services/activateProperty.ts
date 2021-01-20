@@ -52,7 +52,7 @@ export const activateProperty = async (session: {
   const { propertyId, priceId, userUuid, stripeId } = session?.metadata;
   const price = PRICE_MAP[priceId];
 
-  const property = await prisma.property.findOne({
+  const property = await prisma.property.findUnique({
     where: {
       uuid: propertyId,
     },

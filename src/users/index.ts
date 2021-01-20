@@ -1,8 +1,10 @@
 import { MyContext, UserArgs } from "../context";
 import { ApolloError, AuthenticationError } from "apollo-server-express";
+import { published_status, property_status } from "@prisma/client";
+import { addDays } from "date-fns";
 
 export const findUser = async (ctx: MyContext, uuid: string) => {
-  const user = await ctx.prisma.user.findOne({
+  const user = await ctx.prisma.user.findUnique({
     where: {
       uuid,
     },
@@ -16,7 +18,7 @@ export const findUser = async (ctx: MyContext, uuid: string) => {
 };
 
 export const findUserWithProperties = async (ctx: MyContext, uuid: string) => {
-  const user = await ctx.prisma.user.findOne({
+  const user = await ctx.prisma.user.findUnique({
     where: {
       uuid,
     },
@@ -60,7 +62,7 @@ export const verifyUser = async (
 
   if (!uuid) return false;
 
-  const user = await ctx.prisma.user.findOne({
+  const user = await ctx.prisma.user.findUnique({
     where: {
       uuid,
     },
@@ -200,6 +202,43 @@ export const completeOnboarding = async (
       },
       data: {
         onboardingComplete: true,
+      },
+    });
+
+    return true;
+  }
+
+  return false;
+};
+
+export const publishFreeWebsite = async (
+  parent: object,
+  args: { uuid: string },
+  ctx: MyContext
+) => {
+  const userUuid = ctx.req.user?.sub || "";
+  const propertyUuid = args?.uuid;
+
+  const user = await findUser(ctx, userUuid);
+
+  if (!user.trialUsed) {
+    await ctx.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        trialUsed: true,
+      },
+    });
+
+    await ctx.prisma.property.update({
+      data: {
+        webPaidUntil: addDays(new Date(), 36500),
+        publishedStatus: published_status.PUBLISHED,
+        status: property_status.ACTIVE,
+      },
+      where: {
+        uuid: propertyUuid,
       },
     });
 

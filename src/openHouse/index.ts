@@ -100,7 +100,7 @@ export const deleteOpenHouse = async (
   const user = await findUserWithProperties(ctx, userUuid);
 
   try {
-    const openHouse = await ctx.prisma.openHouse.findOne({
+    const openHouse = await ctx.prisma.openHouse.findUnique({
       where: {
         id,
       },

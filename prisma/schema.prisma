@@ -112,6 +112,7 @@ model user {
   facebookLink       String?
   active             Boolean?   @default(true)
   website            String?
+  trialUsed          Boolean?   @default(false)
   lead               lead[]
   order              order[]
   property           property[]

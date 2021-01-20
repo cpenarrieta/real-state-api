@@ -51,7 +51,7 @@ export const deleteAttachment = async (
   const user = await findUserWithProperties(ctx, userUuid);
 
   try {
-    const attachment = await ctx.prisma.attachments.findOne({
+    const attachment = await ctx.prisma.attachments.findUnique({
       where: {
         id,
       },

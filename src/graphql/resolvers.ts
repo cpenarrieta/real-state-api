@@ -6,6 +6,7 @@ import {
   completeOnboarding,
   deleteAccount,
   activateAccount,
+  publishFreeWebsite,
 } from "../users";
 import {
   myProperties,
@@ -74,5 +75,6 @@ export const resolvers = {
     activateAccount,
     saveOpenHouse,
     deleteOpenHouse,
+    publishFreeWebsite,
   },
 };

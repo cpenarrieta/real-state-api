@@ -74,6 +74,7 @@ export const typeDefs = gql`
     profileComplete: Boolean
     onboardingComplete: Boolean
     duplicateUsername: Boolean
+    trialUsed: Boolean
   }
 
   type Attachment {
@@ -348,6 +349,7 @@ export const typeDefs = gql`
     deleteProperty(uuid: String!): Boolean
     markAsSold(uuid: String!, undo: Boolean): Boolean
     completeOnboarding: Boolean
+    publishFreeWebsite(uuid: String!): Boolean
     deleteAccount: Boolean
     activateAccount: Boolean
     saveOpenHouse(openHouse: [OpenHouseInput]!, uuid: String!): Boolean
