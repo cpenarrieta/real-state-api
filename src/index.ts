@@ -73,6 +73,9 @@ const requireAuth = jwt({
         },
         where: {
           active: true,
+          username: {
+            not: null,
+          },
         },
       });
 
